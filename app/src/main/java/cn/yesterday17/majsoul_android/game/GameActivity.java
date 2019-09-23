@@ -1,10 +1,11 @@
 package cn.yesterday17.majsoul_android.game;
 
+import cn.yesterday17.majsoul_android.R;
 import cn.yesterday17.majsoul_android.utils.Network;
 import layaair.autoupdateversion.AutoUpdateAPK;
-import layaair.game.IMarket.IPlugin;
-import layaair.game.Market.GameEngine;
 import layaair.game.browser.ExportJavaFunction;
+import layaair.game.conch.ILayaEventListener;
+import layaair.game.conch.LayaConch5;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,16 +18,21 @@ import android.view.WindowManager;
 
 
 public class GameActivity extends Activity {
+    public static final int AR_CHECK_UPDATE = 1;
+    public static final int DOWNLOAD_THREAD_NUM = 3;
     private static String TAG = "GameActivity";
-    private static GameActivity instance = null;
+    private static String TAG_ENGINE = "LayaConchEngine";
 
-    @Nullable
+    // 单例
+    private static GameActivity instance = null;
     public static GameActivity GetInstance() {
         return instance;
     }
 
-    public static final int AR_CHECK_UPDATE = 1;
-    private IPlugin gameEngine = null;
+    // 面向接口，嗯，面向接口（逃
+    private LayaConch5 GameEngine;
+
+    // 判断 Engine 是否加载完成
     boolean isEngineInitialized = false;
 
     @Override
@@ -47,10 +53,44 @@ public class GameActivity extends Activity {
     }
 
     public void initEngine() {
-        this.gameEngine = new GameEngine();
-        this.gameEngine.game_plugin_init(3);
-        this.setContentView(gameEngine.game_plugin_get_view());
+        this.GameEngine = new LayaConch5(this);
+        this.GameEngine.setLocalizable(false);
+        GameEngine.setIsPlugin(false);
+        GameEngine.setDownloadThreadNum(DOWNLOAD_THREAD_NUM);
+
+        // 加载游戏地址
+        String gameUrl = getString(R.string.gameUrl);
+        GameEngine.setGameUrl(gameUrl);
+        Log.d(TAG_ENGINE, "GamePluginInit, url = " + gameUrl);
+
+        GameEngine.setAlertTitle(getString(R.string.alert_dialog_title));
+        GameEngine.setStringOnBackPressed(getString(R.string.on_back_pressed));
+
+        GameEngine.setAppCacheDir(getCacheDirString());
+        GameEngine.setExpansionZipDir("", "");
+
+        GameEngine.setAssetInfo(getAssets());
+
+        GameEngine.setLayaEventListener(new layaGameListener());
+        GameEngine.setInterceptKey(true);
+        GameEngine.onCreate();
+
+        Log.d(TAG_ENGINE, "GamePluginInit, soPath = " + GameEngine.getSoPath());
+        Log.d(TAG_ENGINE, "GamePluginInit, jarFile = " + GameEngine.getJarFile());
+        Log.d(TAG_ENGINE, "GamePluginInit, appCacheDir = " + GameEngine.getAppCacheDir());
+
+        this.setContentView(GameEngine.getAbsLayout());
         isEngineInitialized = true;
+    }
+
+    public String getCacheDirString() {
+        String sCache = getCacheDir().toString();
+        String[] vString = sCache.split("/");
+        StringBuilder cache = new StringBuilder(50);
+        for (int i = 0; i < vString.length - 1; i++) {
+            cache.append(vString[i]).append("/");
+        }
+        return cache.toString();
     }
 
     public void checkUpdate(Context context) {
@@ -79,7 +119,7 @@ public class GameActivity extends Activity {
     protected void onPause() {
         super.onPause();
         if (isEngineInitialized && !this.isInMultiWindowMode()) {
-            gameEngine.game_plugin_onPause();
+            GameEngine.onPause();
 
         }
     }
@@ -88,7 +128,7 @@ public class GameActivity extends Activity {
     protected void onResume() {
         super.onResume();
         if (isEngineInitialized) {
-            gameEngine.game_plugin_onResume();
+            GameEngine.onResume();
         }
     }
 
@@ -96,7 +136,24 @@ public class GameActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         if (isEngineInitialized) {
-            gameEngine.game_plugin_onDestory();
+            GameEngine.onDestroy();
+        }
+    }
+
+    static class layaGameListener implements ILayaEventListener {
+        @Override
+        public void ExitGame() {
+            Log.i("LayaGameListener", "ExitGame");
+            GameActivity.GetInstance().finish();
+            System.exit(0);
+        }
+
+        @Override
+        public void showAssistantTouch(boolean b) {
+        }
+
+        @Override
+        public void destory() {
         }
     }
 }
