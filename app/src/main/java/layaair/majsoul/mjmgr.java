@@ -1,31 +1,27 @@
 package layaair.majsoul;
 
-import cn.yesterday17.majsoul_android.game.GameActivity;
+import cn.yesterday17.majsoul_android.utils.Application;
+import cn.yesterday17.majsoul_android.utils.ClipBoard;
 import layaair.game.browser.ExportJavaFunction;
 
 public class mjmgr {
-    public static String sociocode = "0";
-    public static int sociotype;
-
-    public static void clearSocioCode() {
-        mjmgr.sociotype = 0;
-        mjmgr.sociocode = "0";
-    }
-
     public void getAppConfig() {
         ExportJavaFunction.CallBackToJS(this, "getAppConfig", "{}");
     }
 
     public void getSocioCode() {
-        ExportJavaFunction.CallBackToJS(this, "getSocioCode", "{\"type\":" + mjmgr.sociotype + ",\"code\":\"" + mjmgr.sociocode + "\"}");
+        ExportJavaFunction.CallBackToJS(this, "getSocioCode", "{\"type\":0,\"code\":\"0\"}");
+    }
+
+    public static void clearSocioCode() {
     }
 
     public static void onAlipay(String arg1) {
-        ExportJavaFunction.alert("雀魂-改精简了支付模块以确保作者没有任何可能性从用户处获取利益，如果需要氪金请使用官方客户端/网页！");
+        ExportJavaFunction.alert("雀魂+精简了支付模块以确保作者没有任何可能性从用户处获取利益，如果需要氪金请使用官方客户端/网页！");
     }
 
     public static void onAlipay_Brower(String arg1) {
-        ExportJavaFunction.alert("雀魂-改精简了支付模块以确保作者没有任何可能性从用户处获取利益，如果需要氪金请使用官方客户端/网页！");
+        ExportJavaFunction.alert("雀魂+精简了支付模块以确保作者没有任何可能性从用户处获取利益，如果需要氪金请使用官方客户端/网页！");
     }
 
     public static void qqLogin() {
@@ -33,11 +29,11 @@ public class mjmgr {
     }
 
     public static void restart() {
-        GameActivity.GetInstance().Restart();
+        Application.Restart();
     }
 
     public static void setSysClipboardText(String text) {
-        GameActivity.GetInstance().SetClipboardText(text);
+        ClipBoard.SetClipboardText(text);
     }
 
     public static void weiboLogin() {

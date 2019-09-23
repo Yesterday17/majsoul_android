@@ -22,7 +22,7 @@ public class SplashDialog extends Dialog {
     private long splashShowTime;
     private long minShowTime = 2;
 
-    private String[] tips = {};
+    private String[] tips = {"初始化中", "初始化中·", "初始化中··", "初始化中···"};
     private int tipIndex = 0;
     private int loadPercent = 0;
 
@@ -63,6 +63,7 @@ public class SplashDialog extends Dialog {
                     splashHandler.removeMessages(0);
                     splashHandler.removeMessages(1);
                     SplashDialog.this.dismiss();
+                    instance = null;
                     break;
                 default:
                     break;
@@ -88,10 +89,7 @@ public class SplashDialog extends Dialog {
         this.loadPercent = percent;
 
         if (tips.length > 0) {
-            if (tipIndex >= tips.length) {
-                tipIndex = 0;
-            }
-            tipsView.setText(tips[tipIndex] + "(" + this.loadPercent + "%)");
+            splashHandler.sendEmptyMessage(0);
         }
     }
 
@@ -104,9 +102,9 @@ public class SplashDialog extends Dialog {
     }
 
     public void showSplash() {
-        this.show();
         splashShowTime = System.currentTimeMillis();
         splashHandler.sendEmptyMessage(0);
+        this.show();
     }
 
     public void dismissSplash() {
@@ -125,24 +123,15 @@ public class SplashDialog extends Dialog {
         this.tipsView = findViewById(R.id.tipsView);
         this.layout = findViewById(R.id.layout);
 
+        this.setBackgroundColor(Color.parseColor("#000000"));
+        this.setFontColor(Color.parseColor("#E8AF71"));
+
         this.setCancelable(false);
     }
 
     // 暴露给 JS 层的函数
     public static void loading(final int percent) {
         SplashDialog.GetInstance().setPercent(percent);
-    }
-
-    public static void showTextInfo(boolean show) {
-        SplashDialog.GetInstance().tipsView.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
-    }
-
-    public static void bgColor(final String color) {
-        SplashDialog.GetInstance().setBackgroundColor(Color.parseColor(color));
-    }
-
-    public static void hideSplash() {
-        SplashDialog.GetInstance().dismissSplash();
     }
 
     public static void setFontColor(final String color) {

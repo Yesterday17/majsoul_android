@@ -23,7 +23,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -31,16 +30,12 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.webkit.ValueCallback;
 
 import layaair.autoupdateversion.data.VersionData;
 import layaair.game.config.config;
 
 public class AutoUpdateAPK {
-    //static public final String CHECK_VERSION_URL = "http://localhost:80/setuptest_update.xml";
-    //static public final String APK_DOWNLOAD_PATH = "mnt/sdcard/";
-    //static public final String DOWNLOAD_APK_NAME = "autoupdate.apk";
-
+    // TODO: Replace here
     static private final int UPDATE_CHECKCOMPLETED = 1;
     static private final int UPDATE_DOWNLOADING = 2;
     static private final int UPDATE_DOWNLOAD_ERROR = 3;

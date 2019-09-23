@@ -1,39 +1,40 @@
 package cn.yesterday17.majsoul_android.game;
 
+import cn.yesterday17.majsoul_android.utils.Network;
 import layaair.autoupdateversion.AutoUpdateAPK;
 import layaair.game.IMarket.IPlugin;
-import layaair.game.IMarket.IPluginRuntimeProxy;
 import layaair.game.Market.GameEngine;
 import layaair.game.browser.ExportJavaFunction;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
 
 public class GameActivity extends Activity {
-    private static GameActivity instance;
+    private static String TAG = "GameActivity";
+    private static GameActivity instance = null;
 
+    @Nullable
     public static GameActivity GetInstance() {
         return instance;
     }
 
     public static final int AR_CHECK_UPDATE = 1;
-    private IPlugin mPlugin = null;
-    private IPluginRuntimeProxy mProxy = null;
+    private IPlugin gameEngine = null;
     boolean isEngineInitialized = false;
-    boolean isExit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 单例
+        this.instance = this;
 
         // 设置全屏
         this.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -43,35 +44,21 @@ public class GameActivity extends Activity {
         // 加载界面
         SplashDialog.GetInstance(this).showSplash();
         checkUpdate(this);
-
-        // 单例
-        this.instance = this;
     }
 
     public void initEngine() {
-        this.mProxy = new RuntimeProxy(this);
-        this.mPlugin = new GameEngine(this);
-        this.mPlugin.game_plugin_set_runtime_proxy(mProxy);
-        this.mPlugin.game_plugin_set_option("localize", "false");
-        this.mPlugin.game_plugin_set_option("gameUrl", "https://majsoul.union-game.com/app/web/html/index.html");
-        this.mPlugin.game_plugin_init(3);
-        this.setContentView(mPlugin.game_plugin_get_view());
+        this.gameEngine = new GameEngine();
+        this.gameEngine.game_plugin_init(3);
+        this.setContentView(gameEngine.game_plugin_get_view());
         isEngineInitialized = true;
     }
 
-    public boolean isOnline(Context context) {
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return connManager.getActiveNetworkInfo() != null
-                && connManager.getActiveNetworkInfo().isAvailable()
-                && connManager.getActiveNetworkInfo().isConnected();
-    }
-
     public void checkUpdate(Context context) {
-        if (isOnline(context)) {
+        if (Network.isOnline()) {
             // 自动版本更新
-            Log.d("0", "[GameActivity] checkUpdate");
+            Log.d(TAG, "checkUpdate");
             new AutoUpdateAPK(context, (Integer integer) -> {
-                Log.d("0", "[GameActivity] checkUpdate - onReceiveValue");
+                Log.d(TAG, "checkUpdate - onReceiveValue");
 
                 // 不论结果如何都启动游戏
                 // TODO: 根据紧急等级决定是否阻止进入游戏
@@ -92,7 +79,7 @@ public class GameActivity extends Activity {
     protected void onPause() {
         super.onPause();
         if (isEngineInitialized && !this.isInMultiWindowMode()) {
-            mPlugin.game_plugin_onPause();
+            gameEngine.game_plugin_onPause();
 
         }
     }
@@ -101,7 +88,7 @@ public class GameActivity extends Activity {
     protected void onResume() {
         super.onResume();
         if (isEngineInitialized) {
-            mPlugin.game_plugin_onResume();
+            gameEngine.game_plugin_onResume();
         }
     }
 
@@ -109,17 +96,7 @@ public class GameActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         if (isEngineInitialized) {
-            mPlugin.game_plugin_onDestory();
+            gameEngine.game_plugin_onDestory();
         }
-    }
-
-    public void Restart() {
-        // TODO: 提示用户重新启动
-        Runtime.getRuntime().exit(0);
-    }
-
-    public void SetClipboardText(String text) {
-        ClipboardManager manager = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
-        manager.setPrimaryClip(ClipData.newPlainText("text", text));
     }
 }

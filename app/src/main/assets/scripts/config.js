@@ -6,37 +6,17 @@ function genTips(content) {
 
 class loadingView {
   constructor() {
-    this.sOS = conchConfig.getOS();
-    this.bridge = PlatformClass.createClass('cn.yesterday17.majsoul_android.game.SplashDialog');
-  }
-
-  get showTextInfo() {
-    return this._showTextInfo;
-  }
-
-  set showTextInfo(value) {
-    this._showTextInfo = value;
-    if (this.bridge) {
-      this.bridge.call('showTextInfo', value);
-    }
-  }
-
-  bgColor(value) {
-    if (this.bridge) {
-      this.bridge.call('bgColor', value);
-    }
+    this.bridge = PlatformClass.createClass(
+      'cn.yesterday17.majsoul_android.game.SplashDialog'
+    );
   }
 
   setFontColor(value) {
-    if (this.bridge) {
-      this.bridge.call('setFontColor', value);
-    }
+    this.bridge.call('setFontColor', value);
   }
 
   setTips(value) {
-    if (this.bridge) {
-      this.bridge.call('setTips', value);
-    }
+    this.bridge.call('setTips', value);
   }
 
   loading(value) {
@@ -66,20 +46,9 @@ class loadingView {
         this.setTips(genTips('加载完成'));
         break;
     }
-    if (this.bridge) {
-      this.bridge.call('loading', value);
-    }
-  }
-
-  hideLoadingView() {
-    this.bridge.call('hideSplash');
+    this.bridge.call('loading', value);
   }
 }
 
 window.loadingView = new loadingView();
-if (window.loadingView) {
-  window.loadingView.bgColor('#000000'); //设置背景颜色
-  window.loadingView.setFontColor('#E8AF71'); //设置字体颜色
-  window.loadingView.setTips(genTips('初始化中')); //设置tips数组，会随机出现
-}
 window.ConchRenderType = 6;
