@@ -1,0 +1,8 @@
+{
+  "name": "majsoul_android",
+  "version": "1.0.0",
+  "devUpdateUrl": "",
+  "updateUrl": "",
+  "updateDelay": 0,
+  "mainjs": "plus.js"
+}
