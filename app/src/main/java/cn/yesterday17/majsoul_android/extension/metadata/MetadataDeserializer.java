@@ -51,30 +51,32 @@ public class MetadataDeserializer implements JsonDeserializer<Metadata> {
 
         // replace / resource pack entry
         String replaceKey = json.has("replace") ? "replace" : "resourcepack";
-        List<ResourceReplaceEntry> replaceEntryList = meta.getReplace();
-        json.getAsJsonArray(replaceKey).forEach((replace) -> {
-            if (!replace.isJsonObject()) {
-                replaceEntryList.add(new ResourceReplaceEntry(replace.getAsString()));
-            } else {
-                JsonObject rep = replace.getAsJsonObject();
-                if (!rep.get("from").isJsonArray()) {
-                    // from is a string
-                    replaceEntryList.add(new ResourceReplaceEntry(
-                            rep.get("from").getAsString(),
-                            rep.get("to").getAsString(),
-                            rep.get("all-servers").getAsBoolean()
-                    ));
+        if (json.has(replaceKey)) {
+            List<ResourceReplaceEntry> replaceEntryList = meta.getReplace();
+            json.getAsJsonArray(replaceKey).forEach((replace) -> {
+                if (!replace.isJsonObject()) {
+                    replaceEntryList.add(new ResourceReplaceEntry(replace.getAsString()));
                 } else {
-                    List<String> from = new ArrayList<>();
-                    rep.get("from").getAsJsonArray().forEach((JsonElement e) -> from.add(e.getAsString()));
-                    replaceEntryList.add(new ResourceReplaceEntry(
-                            from,
-                            rep.get("to").getAsString(),
-                            rep.get("all-servers").getAsBoolean()
-                    ));
+                    JsonObject rep = replace.getAsJsonObject();
+                    if (!rep.get("from").isJsonArray()) {
+                        // from is a string
+                        replaceEntryList.add(new ResourceReplaceEntry(
+                                rep.get("from").getAsString(),
+                                rep.get("to").getAsString(),
+                                rep.get("all-servers").getAsBoolean()
+                        ));
+                    } else {
+                        List<String> from = new ArrayList<>();
+                        rep.get("from").getAsJsonArray().forEach((JsonElement e) -> from.add(e.getAsString()));
+                        replaceEntryList.add(new ResourceReplaceEntry(
+                                from,
+                                rep.get("to").getAsString(),
+                                rep.get("all-servers").getAsBoolean()
+                        ));
+                    }
                 }
-            }
-        });
+            });
+        }
 
 
         // Extension
