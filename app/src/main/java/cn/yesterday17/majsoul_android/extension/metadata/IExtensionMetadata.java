@@ -3,7 +3,7 @@ package cn.yesterday17.majsoul_android.extension.metadata;
 import java.util.List;
 import java.util.Set;
 
-interface IExtensionMetadata extends IMetadata {
+public interface IExtensionMetadata extends IMetadata {
     boolean isExtension();
 
     List<String> getScripts();

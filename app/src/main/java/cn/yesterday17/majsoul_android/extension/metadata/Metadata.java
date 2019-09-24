@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-class Metadata implements IMetadata, IResourcePackMetadata, IExtensionMetadata {
+public class Metadata implements IMetadata, IResourcePackMetadata, IExtensionMetadata {
     String id;
     String version;
 

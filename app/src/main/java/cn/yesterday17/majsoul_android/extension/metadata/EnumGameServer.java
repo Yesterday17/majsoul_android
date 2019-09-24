@@ -1,6 +1,6 @@
 package cn.yesterday17.majsoul_android.extension.metadata;
 
-enum EnumGameServer {
+public enum EnumGameServer {
     CHINA(0),
     JAPAN(1),
     AMERICA(2);

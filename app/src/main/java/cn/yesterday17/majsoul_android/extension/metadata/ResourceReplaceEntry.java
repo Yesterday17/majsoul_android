@@ -3,7 +3,8 @@ package cn.yesterday17.majsoul_android.extension.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-class ResourceReplaceEntry {
+
+public class ResourceReplaceEntry {
     private List<String> from;
     private String to;
     private boolean allServers;

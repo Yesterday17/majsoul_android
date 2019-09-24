@@ -19,7 +19,14 @@ public class MetadataDeserializer implements JsonDeserializer<Metadata> {
         Metadata meta = new Metadata();
 
         // TODO: Validation
+        if (!json.has("id")) {
+            throw new JsonParseException("Missing id!");
+        }
         meta.id = json.get("id").getAsString();
+
+        if (!json.has("version")) {
+            throw new JsonParseException("Missing version!");
+        }
         meta.version = json.get("version").getAsString();
 
         if (json.has("name")) {

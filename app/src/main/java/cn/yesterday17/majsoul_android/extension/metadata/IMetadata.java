@@ -3,7 +3,7 @@ package cn.yesterday17.majsoul_android.extension.metadata;
 import java.util.List;
 import java.util.Map;
 
-interface IMetadata {
+public interface IMetadata {
     default void handleMetadataDefaults() {
         if (this.getName().equals("")) {
             this.setName("未命名");
