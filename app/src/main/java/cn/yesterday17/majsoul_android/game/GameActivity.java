@@ -7,19 +7,17 @@ import layaair.game.browser.ExportJavaFunction;
 import layaair.game.conch.ILayaEventListener;
 import layaair.game.conch.LayaConch5;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import androidx.appcompat.app.AppCompatActivity;
 
 
-public class GameActivity extends Activity {
+public class GameActivity extends AppCompatActivity {
     public static final int AR_CHECK_UPDATE = 1;
-    public static final int DOWNLOAD_THREAD_NUM = 3;
     private static String TAG = "GameActivity";
     private static String TAG_ENGINE = "LayaConchEngine";
 
@@ -54,9 +52,7 @@ public class GameActivity extends Activity {
 
     public void initEngine() {
         this.GameEngine = new LayaConch5(this);
-        this.GameEngine.setLocalizable(false);
         GameEngine.setIsPlugin(false);
-        GameEngine.setDownloadThreadNum(DOWNLOAD_THREAD_NUM);
 
         // 加载游戏地址
         String gameUrl = getString(R.string.gameUrl);
@@ -67,7 +63,6 @@ public class GameActivity extends Activity {
         GameEngine.setStringOnBackPressed(getString(R.string.on_back_pressed));
 
         GameEngine.setAppCacheDir(getCacheDirString());
-        GameEngine.setExpansionZipDir("", "");
 
         GameEngine.setAssetInfo(getAssets());
 
@@ -120,7 +115,6 @@ public class GameActivity extends Activity {
         super.onPause();
         if (isEngineInitialized && !this.isInMultiWindowMode()) {
             GameEngine.onPause();
-
         }
     }
 

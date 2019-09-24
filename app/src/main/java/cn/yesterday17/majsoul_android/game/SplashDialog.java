@@ -7,8 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
@@ -34,19 +34,18 @@ public class SplashDialog extends Dialog {
     private static SplashDialog instance;
 
     @NonNull
-    public static SplashDialog GetInstance(Context context) {
+    static SplashDialog GetInstance(Context context) {
         if (instance == null) {
             instance = new SplashDialog(context);
         }
         return instance;
     }
 
-    @Nullable
-    public static SplashDialog GetInstance() {
+    private static SplashDialog GetInstance() {
         return instance;
     }
 
-    Handler splashHandler = new Handler(Looper.getMainLooper()) {
+    private Handler splashHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message message) {
             super.handleMessage(message);
@@ -72,14 +71,14 @@ public class SplashDialog extends Dialog {
     };
 
     private SplashDialog(Context context) {
-        super(context, R.style.Splash);
+        super(context, R.style.Theme_Splash);
     }
 
-    public void setTips(String[] tips) {
+    private void setTips(String[] tips) {
         this.tips = tips;
     }
 
-    public void setPercent(int percent) {
+    private void setPercent(int percent) {
         if (percent == 100) {
             dismissSplash();
         }
@@ -93,21 +92,21 @@ public class SplashDialog extends Dialog {
         }
     }
 
-    public void setFontColor(int color) {
+    private void setFontColor(int color) {
         tipsView.setTextColor(color);
     }
 
-    public void setBackgroundColor(int color) {
+    private void setBackgroundColor(int color) {
         layout.setBackgroundColor(color);
     }
 
-    public void showSplash() {
+    void showSplash() {
         splashShowTime = System.currentTimeMillis();
         splashHandler.sendEmptyMessage(0);
         this.show();
     }
 
-    public void dismissSplash() {
+    private void dismissSplash() {
         long showTime = System.currentTimeMillis() - splashShowTime;
         if (showTime >= minShowTime * 1000) {
             splashHandler.sendEmptyMessage(1);
