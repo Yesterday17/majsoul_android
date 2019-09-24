@@ -29,6 +29,20 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.mspe" />
+                <data android:pathPattern=".*\\.mspm" />
+                <data android:pathPattern=".*\\.mspr" />
+                <data android:host="*" />
+            </intent-filter>
         </activity>
 
         <activity

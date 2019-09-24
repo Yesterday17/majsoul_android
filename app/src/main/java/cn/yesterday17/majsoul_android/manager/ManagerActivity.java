@@ -2,6 +2,7 @@ package cn.yesterday17.majsoul_android.manager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +22,8 @@ import cn.yesterday17.majsoul_android.manager.views.ExtensionFragment;
 import cn.yesterday17.majsoul_android.manager.views.SettingFragment;
 
 public class ManagerActivity extends AppCompatActivity {
+    private final String TAG = "ManagerActivity";
+
     private BottomNavigationView bottomNavigation;
     private ViewPager viewPager;
     FloatingActionButton startGameButton;
@@ -29,8 +32,8 @@ public class ManagerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: 设置: 直接进入游戏
-        if (false) {
+        if (!isOpeningFile() && false) {
+            // TODO: 设置: 直接进入游戏
             startGame();
         }
 
@@ -38,8 +41,10 @@ public class ManagerActivity extends AppCompatActivity {
 
         initView();
         prepareStartGame();
+        prepareOpenInstall();
 
         // TODO: 在这个阶段就加载部分游戏内容 加快游戏启动
+        // TODO: 弹出安装窗口
     }
 
     public void initView() {
@@ -95,6 +100,19 @@ public class ManagerActivity extends AppCompatActivity {
         Intent intent = new Intent(this, GameActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    public void prepareOpenInstall() {
+        Intent intent = getIntent();
+        if (intent.ACTION_VIEW.equals(intent.getAction())) {
+            // TODO: Install
+            Log.d(TAG, intent.getDataString());
+        }
+    }
+
+    private boolean isOpeningFile() {
+        Intent intent = getIntent();
+        return intent.ACTION_VIEW.equals(intent.getAction());
     }
 
 }
