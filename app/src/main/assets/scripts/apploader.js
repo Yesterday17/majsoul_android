@@ -7304,9 +7304,5 @@ conch.showFPS = function(x, y) {
   window['conchFps'] = new ConchFps('#ffffff', 32, x, y);
 };
 
-// 外部库引入
-require('plus/xhr.js');
-require('lib/fetch.js');
-
 // 启动游戏
 require('plus');

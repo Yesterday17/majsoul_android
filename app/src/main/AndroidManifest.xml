@@ -24,12 +24,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="file" />
                 <data android:scheme="content" />
                 <data android:mimeType="*/*" />
                 <data android:pathPattern=".*\\.mspe" />
                 <data android:pathPattern=".*\\.mspm" />
                 <data android:pathPattern=".*\\.mspr" />
+
+                <!-- 兼容因雀P错误添加扩展名的文件格式 -->
+                <data android:pathPattern=".*\\.mspe\\.mspe" />
+                <data android:pathPattern=".*\\.mspm\\.mspm" />
+                <!--<data android:pathPattern=".*\\.mspr\\.mspr" />-->
                 <data android:host="*" />
             </intent-filter>
         </activity>
