@@ -7,89 +7,44 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
 import android.view.View;
 import android.widget.TextView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import cn.yesterday17.majsoul_android.R;
 
 
 public class SplashDialog extends Dialog {
-    private long splashShowTime;
-    private long minShowTime = 2;
-
-    private String[] tips = {"初始化中", "初始化中·", "初始化中··", "初始化中···"};
-    private int tipIndex = 0;
-    private int loadPercent = 0;
+    private static String[] tips = new String[4];
+    private static int tipIndex = 0;
+    private static int loadPercent = 0;
+    private static String format = "%1$s (%2$d)%%";
 
     // Widgets
     private View layout;
     private TextView tipsView;
 
-    // Instance
-    private static SplashDialog instance;
+    private static Handler splashHandler;
 
-    @NonNull
-    static SplashDialog GetInstance(Context context) {
-        if (instance == null) {
-            instance = new SplashDialog(context);
-        }
-        return instance;
-    }
-
-    private static SplashDialog GetInstance() {
-        return instance;
-    }
-
-    private Handler splashHandler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message message) {
-            super.handleMessage(message);
-            switch (message.what) {
-                case 0:
-                    splashHandler.removeMessages(0);
-                    if (tips.length > 0) {
-                        tipsView.setText(tips[tipIndex] + "(" + loadPercent + "%)");
-                        tipIndex = (tipIndex + 1) % tips.length;
-                    }
-                    splashHandler.sendEmptyMessageDelayed(0, 1000);
-                    break;
-                case 1:
-                    splashHandler.removeMessages(0);
-                    splashHandler.removeMessages(1);
-                    SplashDialog.this.dismiss();
-                    instance = null;
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
-    private SplashDialog(Context context) {
+    SplashDialog(Context context) {
         super(context, R.style.Theme_Splash);
-    }
 
-    private void setTips(String[] tips) {
-        this.tips = tips;
-    }
+        splashHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message message) {
+                super.handleMessage(message);
+                splashHandler.removeMessages(0);
 
-    private void setPercent(int percent) {
-        if (percent == 100) {
-            dismissSplash();
-        }
+                if (loadPercent == 100) {
+                    dismissSplash();
+                    return;
+                }
 
-        percent = Math.max(percent, 0);
-        percent = Math.min(percent, 100);
-        this.loadPercent = percent;
-
-        if (tips.length > 0) {
-            splashHandler.sendEmptyMessage(0);
-        }
+                tipsView.setText(String.format(format, tips[tipIndex], loadPercent));
+                tipIndex = (tipIndex + 1) % tips.length;
+                splashHandler.sendEmptyMessageDelayed(0, 1000);
+            }
+        };
     }
 
     private void setFontColor(int color) {
@@ -101,18 +56,13 @@ public class SplashDialog extends Dialog {
     }
 
     void showSplash() {
-        splashShowTime = System.currentTimeMillis();
         splashHandler.sendEmptyMessage(0);
         this.show();
     }
 
     private void dismissSplash() {
-        long showTime = System.currentTimeMillis() - splashShowTime;
-        if (showTime >= minShowTime * 1000) {
-            splashHandler.sendEmptyMessage(1);
-        } else {
-            splashHandler.sendEmptyMessageDelayed(1, this.minShowTime * 1000 - showTime);
-        }
+        dismiss();
+        splashHandler = null;
     }
 
     protected void onCreate(Bundle bundle) {
@@ -122,30 +72,59 @@ public class SplashDialog extends Dialog {
         this.tipsView = findViewById(R.id.tipsView);
         this.layout = findViewById(R.id.layout);
 
-        this.setBackgroundColor(Color.parseColor("#000000"));
-        this.setFontColor(Color.parseColor("#E8AF71"));
+        setBackgroundColor(Color.parseColor("#000000"));
+        setFontColor(Color.parseColor("#E8AF71"));
+        setTips("初始化中");
 
         this.setCancelable(false);
     }
 
+    private static void setTips(final String tip) {
+        tips[0] = tip;
+        tips[1] = tip + "·";
+        tips[2] = tip + "··";
+        tips[3] = tip + "···";
+    }
+
     // 暴露给 JS 层的函数
+    @SuppressWarnings("unused")
     public static void loading(final int percent) {
-        SplashDialog.GetInstance().setPercent(percent);
-    }
+        loadPercent = Math.min(Math.max(percent, 0), 100);
 
-    public static void setFontColor(final String color) {
-        SplashDialog.GetInstance().setFontColor(Color.parseColor(color));
-    }
-
-    public static void setTips(final JSONArray tips) {
-        try {
-            String[] tipsArray = new String[tips.length()];
-            for (int i = 0; i < tips.length(); i++) {
-                tipsArray[i] = tips.getString(i);
-            }
-            SplashDialog.GetInstance().setTips(tipsArray);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        // 设置提示文本
+        switch (percent) {
+            case 10:
+                setTips("加载 HTML 中");
+                break;
+            case 20:
+                setTips("加载 version.json 中");
+                break;
+            case 30:
+                setTips("执行 load0 中");
+                break;
+            case 40:
+                setTips("加载 resversion.json 中");
+                break;
+            case 44:
+            case 48:
+            case 52:
+            case 56:
+            case 60:
+                setTips("加载字体中");
+                break;
+            case 70:
+                setTips("加载 config.json 中");
+                break;
+            case 80:
+                setTips("加载 liqi.json 中");
+                break;
+            case 85:
+                setTips("执行 app.NetAgent.init 中");
+                break;
+            case 100:
+            default:
+                break;
         }
+        splashHandler.sendEmptyMessage(0);
     }
 }

@@ -11,7 +11,7 @@
 
         <activity
             android:name=".manager.ManagerActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.Manager">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

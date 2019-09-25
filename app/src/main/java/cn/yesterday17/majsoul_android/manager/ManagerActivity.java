@@ -15,6 +15,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import cn.yesterday17.majsoul_android.Global;
 import cn.yesterday17.majsoul_android.R;
 import cn.yesterday17.majsoul_android.game.GameActivity;
 import cn.yesterday17.majsoul_android.manager.views.AboutFragment;
@@ -31,14 +32,11 @@ public class ManagerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initGlobal();
 
         if (!isOpeningFile() && false) {
             // TODO: 设置: 直接进入游戏
             startGame();
-        }
-
-        if (GameActivity.GetInstance() != null) {
-            GameActivity.GetInstance().finish();
         }
 
         setContentView(R.layout.activity_manager);
@@ -54,10 +52,18 @@ public class ManagerActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        this.prepareOpenInstall();
+        // Kill
+        prepareOpenInstall();
     }
 
-    public void initView() {
+    void initGlobal() {
+        Global.applicationContext = getApplicationContext();
+
+        // TODO: Load Settings here
+        Global.gameUrl = getString(R.string.cnGameUrl);
+    }
+
+    void initView() {
         bottomNavigation = findViewById(R.id.bottom_navigation);
         viewPager = findViewById(R.id.viewPager);
 
@@ -100,19 +106,19 @@ public class ManagerActivity extends AppCompatActivity {
         viewPager.setOnTouchListener((View v, MotionEvent event) -> true);
     }
 
-    public void prepareStartGame() {
+    void prepareStartGame() {
         startGameButton = findViewById(R.id.start_game);
         startGameButton.setOnClickListener((View view) -> startGame()
         );
     }
 
-    public void startGame() {
+    void startGame() {
         Intent intent = new Intent(this, GameActivity.class);
         startActivity(intent);
         finish();
     }
 
-    public void prepareOpenInstall() {
+    void prepareOpenInstall() {
         Intent intent = getIntent();
         if (intent.ACTION_VIEW.equals(intent.getAction())) {
             // TODO: Install
@@ -120,7 +126,7 @@ public class ManagerActivity extends AppCompatActivity {
         }
     }
 
-    private boolean isOpeningFile() {
+    boolean isOpeningFile() {
         Intent intent = getIntent();
         return intent.ACTION_VIEW.equals(intent.getAction());
     }

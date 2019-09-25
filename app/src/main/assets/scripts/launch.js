@@ -1,13 +1,10 @@
 exports.launch = function() {
-  if (window && window['conch']) {
-    window['loadingView'].loading(10);
-  }
+  window.loadingView.loading(10);
+
   fetch('version.json')
     .then(data => {
       // 加载到 20%
-      if (window && window['conch']) {
-        window['loadingView'].loading(20);
-      }
+      window.loadingView.loading(20);
 
       if (data.status === 200) {
         return data.json();

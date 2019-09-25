@@ -4,6 +4,7 @@ import cn.yesterday17.majsoul_android.utils.Application;
 import cn.yesterday17.majsoul_android.utils.ClipBoard;
 import layaair.game.browser.ExportJavaFunction;
 
+@SuppressWarnings("unused")
 public class mjmgr {
     public void getAppConfig() {
         ExportJavaFunction.CallBackToJS(this, "getAppConfig", "{}");
@@ -17,11 +18,11 @@ public class mjmgr {
     }
 
     public static void onAlipay(String arg1) {
-        ExportJavaFunction.alert("雀魂+精简了支付模块以确保作者没有任何可能性从用户处获取利益，如果需要氪金请使用官方客户端/网页！");
+        ExportJavaFunction.alert("雀魂+精简了支付模块，如果需要氪金请使用官方客户端/网页！");
     }
 
     public static void onAlipay_Brower(String arg1) {
-        ExportJavaFunction.alert("雀魂+精简了支付模块以确保作者没有任何可能性从用户处获取利益，如果需要氪金请使用官方客户端/网页！");
+        ExportJavaFunction.alert("雀魂+精简了支付模块，如果需要氪金请使用官方客户端/网页！");
     }
 
     public static void qqLogin() {

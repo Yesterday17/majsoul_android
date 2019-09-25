@@ -346,12 +346,8 @@ function loadUrl(url) {
       if (data) break;
     }
     if (!data) {
-      if (window['loadingView']) {
-        window['loadingView'].setFontColor('#FF0000');
-        window['loadingView'].setTips([
-          '网络异常，请检查您的网络或与开发商联系。'
-        ]);
-      }
+      alert('网络异常，请检查您的网络或与开发商联系。');
+
       data = cache.loadCachedURL(url);
       if (!data || data.length <= 0)
         if (window['onLayaInitError']) {
