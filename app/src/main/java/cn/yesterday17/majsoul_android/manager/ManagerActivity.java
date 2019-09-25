@@ -37,6 +37,10 @@ public class ManagerActivity extends AppCompatActivity {
             startGame();
         }
 
+        if (GameActivity.GetInstance() != null) {
+            GameActivity.GetInstance().finish();
+        }
+
         setContentView(R.layout.activity_manager);
 
         initView();
@@ -45,6 +49,12 @@ public class ManagerActivity extends AppCompatActivity {
 
         // TODO: 在这个阶段就加载部分游戏内容 加快游戏启动
         // TODO: 弹出安装窗口
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        this.prepareOpenInstall();
     }
 
     public void initView() {

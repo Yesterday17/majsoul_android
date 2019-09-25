@@ -1,28 +1,24 @@
 package cn.yesterday17.majsoul_android.game;
 
 import cn.yesterday17.majsoul_android.R;
-import cn.yesterday17.majsoul_android.utils.Network;
-import layaair.autoupdateversion.AutoUpdateAPK;
-import layaair.game.browser.ExportJavaFunction;
 import layaair.game.conch.ILayaEventListener;
 import layaair.game.conch.LayaConch5;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 
 public class GameActivity extends AppCompatActivity {
-    public static final int AR_CHECK_UPDATE = 1;
     private static String TAG = "GameActivity";
     private static String TAG_ENGINE = "LayaConchEngine";
 
     // 单例
     private static GameActivity instance = null;
+
     public static GameActivity GetInstance() {
         return instance;
     }
@@ -47,7 +43,7 @@ public class GameActivity extends AppCompatActivity {
 
         // 加载界面
         SplashDialog.GetInstance(this).showSplash();
-        checkUpdate(this);
+        initEngine();
     }
 
     public void initEngine() {
@@ -88,28 +84,6 @@ public class GameActivity extends AppCompatActivity {
         return cache.toString();
     }
 
-    public void checkUpdate(Context context) {
-        if (Network.isOnline()) {
-            // 自动版本更新
-            Log.d(TAG, "checkUpdate");
-            new AutoUpdateAPK(context, (Integer integer) -> {
-                Log.d(TAG, "checkUpdate - onReceiveValue");
-
-                // 不论结果如何都启动游戏
-                // TODO: 根据紧急等级决定是否阻止进入游戏
-                initEngine();
-            });
-        } else {
-            ExportJavaFunction.alert("网络连接失败，请稍后再试！");
-        }
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == AR_CHECK_UPDATE) {
-            checkUpdate(this);
-        }
-    }
-
     // 处理暂停逻辑，对分屏进行特别优化
     protected void onPause() {
         super.onPause();
@@ -132,6 +106,12 @@ public class GameActivity extends AppCompatActivity {
         if (isEngineInitialized) {
             GameEngine.onDestroy();
         }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        instance = null;
     }
 
     static class layaGameListener implements ILayaEventListener {
