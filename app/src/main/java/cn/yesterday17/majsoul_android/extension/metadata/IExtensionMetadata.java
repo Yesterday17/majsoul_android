@@ -18,7 +18,7 @@ public interface IExtensionMetadata extends IMetadata {
 
     default void handleExtensionDefaults() {
         if (this.getScripts().isEmpty()) {
-            this.getScripts().add("entry.js");
+            this.getScripts().add("script.js");
         }
 
         if (this.getApplyServers().isEmpty()) {
