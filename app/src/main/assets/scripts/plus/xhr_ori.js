@@ -303,4 +303,4 @@ var XMLHttpRequest = (function(_super) {
   return XMLHttpRequest;
 })(EventTarget);
 
-exports.XMLHttpRequest = XMLHttpReques;
+exports.XMLHttpRequest = XMLHttpRequest;

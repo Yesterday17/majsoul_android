@@ -1,10 +1,11 @@
-var XMLHttpRequest_Original = require('plus/xhr.js').XMLHttpRequest;
+var XMLHttpRequest_Original = require('plus/xhr_ori.js').XMLHttpRequest;
 
-class XMLHttpRequest {
-  open(method, url, async) {}
+// class XMLHttpRequest {
+//   open(method, url, async) {}
 
-  setRequestHeader(key, value) {
-    //
-  }
-}
-window.XMLHttpRequest = XMLHttpRequest;
+//   setRequestHeader(key, value) {
+//     //
+//   }
+// }
+
+window.XMLHttpRequest = XMLHttpRequest_Original;
