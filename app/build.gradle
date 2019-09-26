@@ -1,11 +1,12 @@
 apply plugin: 'com.android.application'
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
-    signingConfigs {
-        release {
-            storeFile file('~/key.jks')
-        }
-    }
     compileSdkVersion 28
     buildToolsVersion '29.0.2'
     useLibrary 'org.apache.http.legacy'
@@ -16,15 +17,38 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    splits {
+        abi {
+            enable true
+            reset()
+            include "arm64-v8a", "armeabi-v7a"
+            universalApk false
+        }
+    }
+
     sourceSets.main {
         jniLibs.srcDir 'libs'
     }
-    buildTypes {
+
+    signingConfigs {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
         }
     }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            multiDexEnabled = false
+            signingConfig signingConfigs.release
+        }
+    }
+
     compileOptions {
         sourceCompatibility 1.8
         targetCompatibility 1.8
@@ -41,11 +65,7 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.navigation:navigation-fragment:2.2.0-alpha03'
-    implementation 'androidx.navigation:navigation-ui:2.2.0-alpha03'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
 
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.okhttp3:okhttp:4.2.0'
