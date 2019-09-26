@@ -5,15 +5,13 @@ import cn.yesterday17.majsoul_android.R;
 import layaair.game.conch.ILayaEventListener;
 import layaair.game.conch.LayaConch5;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends Activity {
     private static String TAG = "GameActivity";
     private static String TAG_ENGINE = "LayaConchEngine";
 
@@ -26,6 +24,8 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Global.isGameRunning = true;
 
         // 设置全屏
         this.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -94,6 +94,8 @@ public class GameActivity extends AppCompatActivity {
     // 游戏结束
     protected void onDestroy() {
         super.onDestroy();
+        Global.isGameRunning = false;
+
         if (isEngineInitialized) {
             GameEngine.onDestroy();
         }

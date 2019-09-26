@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import cn.yesterday17.majsoul_android.Constants;
 import cn.yesterday17.majsoul_android.Global;
 import cn.yesterday17.majsoul_android.extension.metadata.ExtensionScript;
 import cn.yesterday17.majsoul_android.extension.metadata.Metadata;
@@ -32,7 +33,7 @@ public class ExtensionManager {
     private Map<String, List<ExtensionScript>> beforeGame = new HashMap<>();
     private Map<String, List<ExtensionScript>> afterGame = new HashMap<>();
 
-    private Gson gson = new GsonBuilder()
+    private static Gson gson = new GsonBuilder()
             .registerTypeHierarchyAdapter(Metadata.class, new MetadataDeserializer())
             .create();
 
@@ -46,6 +47,9 @@ public class ExtensionManager {
         return instance;
     }
 
+    /**
+     * Makesure it runs in a new thread!!!
+     */
     private void init() {
         if (loaded) return;
 
@@ -53,7 +57,7 @@ public class ExtensionManager {
         for (File f : extensions) {
             if (f.isDirectory()) {
                 try {
-                    Metadata meta = loadMetadata(f.getAbsolutePath() + File.separator + "extension.json");
+                    Metadata meta = loadMetadata(f.getAbsolutePath());
                     Log.d(TAG, meta.getName());
                     this.load(meta);
                 } catch (FileNotFoundException e) {
@@ -81,8 +85,8 @@ public class ExtensionManager {
         }).run();
     }
 
-    public Metadata loadMetadata(String file) throws FileNotFoundException, JsonParseException {
-        return gson.fromJson(new FileReader(file), Metadata.class);
+    public static Metadata loadMetadata(String folder) throws FileNotFoundException, JsonParseException {
+        return gson.fromJson(new FileReader(folder + File.separator + Constants.EXTENSION_METADATA_FILENAME), Metadata.class);
     }
 
     public void loadAsync(Metadata metadata) {
@@ -127,7 +131,6 @@ public class ExtensionManager {
         extMap.forEach((id, scripts) ->
                 scripts.forEach(data ->
                         builder.append("((context, console, fetchSelf) => {\n")
-                                .append("'use strict';\n")
                                 .append(data.getScript())
                                 .append("})(\n")
                                 .append("  Majsoul_Plus.").append(id).append(",\n")

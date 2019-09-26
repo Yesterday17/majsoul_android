@@ -47,7 +47,7 @@ class _ExtensionManagerState extends State<ExtensionManager> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.extension),
-            title: Text('拓展'),
+            title: Text('扩展'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),

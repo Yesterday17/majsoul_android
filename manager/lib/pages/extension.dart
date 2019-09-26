@@ -48,7 +48,7 @@ class _ExtensionPageState extends State<ExtensionPage> {
   Widget build(BuildContext context) {
     if (extensions == null) {
       return Center(
-        child: Text('加载拓展列表中'),
+        child: Text('加载扩展列表中'),
       );
     }
 

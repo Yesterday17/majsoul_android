@@ -9,4 +9,8 @@ public class Global {
     public static String gameUrl;
 
     public static boolean directGame;
+
+    public static boolean isManagerRunning = false;
+
+    public static boolean isGameRunning = false;
 }

@@ -22,6 +22,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <meta-data
+                android:name="io.flutter.Entrypoint"
+                android:value="main" />
+        </activity>
+
+        <activity
+            android:name=".extension.install.InstallActivity"
+            android:launchMode="singleTop"
+            android:resizeableActivity="false"
+            android:theme="@android:style/Theme.Holo.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -40,10 +50,6 @@
                 <!--<data android:pathPattern=".*\\.mspr\\.mspr" />-->
                 <data android:host="*" />
             </intent-filter>
-
-            <meta-data
-                android:name="io.flutter.Entrypoint"
-                android:value="main" />
         </activity>
 
         <activity
