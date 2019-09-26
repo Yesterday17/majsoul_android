@@ -1,6 +1,7 @@
 package cn.yesterday17.majsoul_android.manager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -15,17 +16,21 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import cn.yesterday17.majsoul_android.Global;
-import cn.yesterday17.majsoul_android.R;
 import cn.yesterday17.majsoul_android.extension.ExtensionManager;
 import cn.yesterday17.majsoul_android.extension.metadata.Metadata;
 import cn.yesterday17.majsoul_android.game.GameActivity;
 import cn.yesterday17.majsoul_android.extension.ExtensionFileOutputStream;
 import io.flutter.app.FlutterActivity;
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.flutter.view.FlutterMain;
 
 public class ManagerActivity extends FlutterActivity {
     private final String TAG = "ManagerActivity";
+
+    private final int SETTINGS_PREF = 0;
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +39,8 @@ public class ManagerActivity extends FlutterActivity {
         GeneratedPluginRegistrant.registerWith(this);
         initGlobal();
 
-        if (!isOpeningFile() && false) {
-            // TODO: 设置: 直接进入游戏
+        // 在非打开文件的情况下启用直接进入游戏
+        if (!isOpeningFile() && Global.directGame) {
             startGame();
         }
 
@@ -44,6 +49,11 @@ public class ManagerActivity extends FlutterActivity {
 
         // TODO: 在这个阶段就加载部分游戏内容 加快游戏启动
         // TODO: 弹出安装窗口
+
+        // 注册与 Flutter 交互的通道
+        new MethodChannel(getFlutterView(), Setting.SETTING_CHANNEL).setMethodCallHandler((MethodCall call, MethodChannel.Result result) ->
+                Setting.handleSetting(call, result, preferences)
+        );
     }
 
     @Override
@@ -56,8 +66,9 @@ public class ManagerActivity extends FlutterActivity {
         Global.dataDir = getDataDir().toString();
         Global.filesDir = getFilesDir().toString();
 
-        // TODO: Load Settings here
-        Global.gameUrl = getString(R.string.cnGameUrl);
+        preferences = getPreferences(SETTINGS_PREF);
+        Global.gameUrl = preferences.getString("game_url", "https://majsoul.union-game.com/app/web/html/index.html");
+        Global.directGame = preferences.getBoolean("direct_game", false);
     }
 
     void startGame() {
@@ -69,7 +80,7 @@ public class ManagerActivity extends FlutterActivity {
     void prepareOpenInstall() {
         Intent intent = getIntent();
         Log.d(TAG, intent.getAction());
-        if (intent.ACTION_VIEW.equals(intent.getAction())) {
+        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Log.d(TAG, intent.getDataString());
             String id = "";
 
@@ -128,7 +139,16 @@ public class ManagerActivity extends FlutterActivity {
     }
 
     boolean isOpeningFile() {
-        Intent intent = getIntent();
-        return intent.ACTION_VIEW.equals(intent.getAction());
+        return Intent.ACTION_VIEW.equals(getIntent().getAction());
+    }
+
+    private void handleMethodCall(MethodCall call, MethodChannel.Result result) {
+        if (call.method.equals("setting")) {
+            Setting.handleSetting(call, result, preferences);
+        } else if (call.method.equals("startGame")) {
+            this.startGame();
+        }
+
+        result.notImplemented();
     }
 }

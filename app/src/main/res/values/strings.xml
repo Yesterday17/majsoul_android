@@ -2,11 +2,4 @@
     <string name="app_name">雀魂+</string>
     <string name="on_back_pressed">再次点击后退键退出游戏!</string>
     <string name="alert_dialog_title">提示</string>
-    <string name="cnGameUrl">https://majsoul.union-game.com/app/web/html/index.html</string>
-
-    <string name="manager_title">模组管理器</string>
-    <string name="manager_extension">扩展</string>
-    <string name="manager_resource_pack">资源包</string>
-    <string name="manager_setting">设置</string>
-    <string name="manager_about">关于</string>
 </resources>
