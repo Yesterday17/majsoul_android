@@ -21,6 +21,9 @@ import cn.yesterday17.majsoul_android.Global;
 import cn.yesterday17.majsoul_android.extension.metadata.ExtensionScript;
 import cn.yesterday17.majsoul_android.extension.metadata.Metadata;
 import cn.yesterday17.majsoul_android.extension.metadata.MetadataDeserializer;
+import cn.yesterday17.majsoul_android.utils.StringUtils;
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
 import layaair.game.browser.ExportJavaFunction;
 
 public class ExtensionManager {
@@ -64,7 +67,7 @@ public class ExtensionManager {
         initAsync(null);
     }
 
-    public void initAsync(@Nullable Callable callback) {
+    public void initAsync(@Nullable Callable<Void> callback) {
         new Thread(() -> {
             this.init();
             try {
@@ -85,7 +88,7 @@ public class ExtensionManager {
         loadAsync(metadata, null);
     }
 
-    public void loadAsync(Metadata metadata, @Nullable Callable callback) {
+    public void loadAsync(Metadata metadata, @Nullable Callable<Void> callback) {
         new Thread(() -> {
             this.load(metadata);
             try {
@@ -150,5 +153,34 @@ public class ExtensionManager {
                 "getAfterGameScripts",
                 getScripts(instance.afterGame)
         )).run();
+    }
+
+    public static class ExtensionBridge {
+        public static String EXTENSION_CHANNEL = "cn.yesterday17.majsoul_android/extension";
+
+        public static void handleExtension(MethodCall call, MethodChannel.Result result) {
+            if (call.method.equals("getList")) {
+                ExtensionManager.GetInstance().initAsync(() -> {
+                    result.success(genExtensionDataMap());
+                    return null;
+                });
+            } else {
+                result.notImplemented();
+            }
+        }
+
+        private static Map<String, Map<String, String>> genExtensionDataMap() {
+            Map<String, Map<String, String>> result = new HashMap<>();
+            ExtensionManager.GetInstance().getExtensions().values().forEach((metadata) -> {
+                Map<String, String> map = new HashMap<>();
+                map.put("id", metadata.getID());
+                map.put("name", metadata.getName());
+                map.put("desc", metadata.getDescription());
+                map.put("version", metadata.getVersion());
+                map.put("author", StringUtils.Join(metadata.getAuthors(), ","));
+                result.put(metadata.getID(), map);
+            });
+            return result;
+        }
     }
 }

@@ -60,6 +60,11 @@ public class ManagerActivity extends FlutterActivity {
                 (MethodCall call, MethodChannel.Result result) ->
                         SettingBridge.handleSetting(call, result, preferences)
         );
+        // 管理拓展
+        new MethodChannel(getFlutterView(), ExtensionManager.ExtensionBridge.EXTENSION_CHANNEL).setMethodCallHandler(
+                (MethodCall call, MethodChannel.Result result) ->
+                        ExtensionManager.ExtensionBridge.handleExtension(call, result)
+        );
         // 启动游戏
         new MethodChannel(getFlutterView(), START_GAME_CHANNEL).setMethodCallHandler(
                 (MethodCall call, MethodChannel.Result result) -> startGame()
