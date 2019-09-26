@@ -57,6 +57,7 @@ public class ExtensionManager {
                     Log.d(TAG, meta.getName());
                     this.load(meta);
                 } catch (FileNotFoundException e) {
+                    Log.e(TAG, f.getAbsolutePath());
                 }
             }
         }
@@ -126,6 +127,7 @@ public class ExtensionManager {
         extMap.forEach((id, scripts) ->
                 scripts.forEach(data ->
                         builder.append("((context, console, fetchSelf) => {\n")
+                                .append("'use strict';\n")
                                 .append(data.getScript())
                                 .append("})(\n")
                                 .append("  Majsoul_Plus.").append(id).append(",\n")

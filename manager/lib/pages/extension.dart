@@ -58,41 +58,32 @@ class _ExtensionPageState extends State<ExtensionPage> {
       itemCount: extensions.length,
       itemBuilder: (context, index) {
         var ext = exts[index];
-        return InkWell(
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: Column(
+        return Card(
+          child: Column(
+            children: <Widget>[
+              Stack(
                 children: <Widget>[
-                  Stack(
-                    children: <Widget>[
-                      ListTile(
-                        leading: Checkbox(
-                          value: true,
-                          onChanged: (value) {},
-                        ),
-                        title: Text('${ext.name} - ${ext.author}'),
-                        subtitle: Text(ext.description),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
-                        child: Align(
-                          alignment: Alignment.topRight,
-                          child: Text(exts[index].version),
-                        ),
-                      )
-                    ],
+                  ListTile(
+                    contentPadding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    onTap: () {},
+                    leading: Checkbox(
+                      value: true,
+                      onChanged: (value) {},
+                    ),
+                    title: Text('${ext.name} - ${ext.author}'),
+                    subtitle: Text(ext.description),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 12.0),
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Text(ext.version),
+                    ),
                   )
                 ],
-              ),
-            ),
+              )
+            ],
           ),
-          onTap: () {
-            // TODO: Enable / Disable
-          },
-          onLongPress: () {
-            // TODO: Detailed page / delete
-          },
         );
       },
     );

@@ -56,6 +56,7 @@ public class ExtensionScript {
         while (!this.loaded) ;
         return "  try {\n" + this.content + "\n" +
                 "  } catch(e) {\n" +
+                "    alert(e);\n" +
                 "    console.error('Unresolved Error', e);\n" +
                 "  }";
     }
