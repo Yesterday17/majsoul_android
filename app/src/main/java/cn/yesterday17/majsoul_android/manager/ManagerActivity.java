@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.JsonParseException;
 
 import java.io.File;
@@ -28,6 +30,8 @@ import io.flutter.view.FlutterMain;
 
 public class ManagerActivity extends FlutterActivity {
     private final String TAG = "ManagerActivity";
+    static String START_GAME_CHANNEL = "cn.yesterday17.majsoul_android/start_game";
+
 
     private final int SETTINGS_PREF = 0;
     private SharedPreferences preferences;
@@ -37,23 +41,37 @@ public class ManagerActivity extends FlutterActivity {
         FlutterMain.startInitialization(this);
         super.onCreate(savedInstanceState);
         GeneratedPluginRegistrant.registerWith(this);
+
+        // 初始化全局变量
         initGlobal();
 
-        // 在非打开文件的情况下启用直接进入游戏
+        // 在非导入拓展的情况下 判断是否直接进入游戏
         if (!isOpeningFile() && Global.directGame) {
             startGame();
         }
 
-        ExtensionManager.GetInstance().init();
-        prepareOpenInstall();
+        ExtensionManager.GetInstance().initAsync();
 
         // TODO: 在这个阶段就加载部分游戏内容 加快游戏启动
-        // TODO: 弹出安装窗口
 
         // 注册与 Flutter 交互的通道
-        new MethodChannel(getFlutterView(), Setting.SETTING_CHANNEL).setMethodCallHandler((MethodCall call, MethodChannel.Result result) ->
-                Setting.handleSetting(call, result, preferences)
+        // 修改/读取设置
+        new MethodChannel(getFlutterView(), Setting.SETTING_CHANNEL).setMethodCallHandler(
+                (MethodCall call, MethodChannel.Result result) ->
+                        Setting.handleSetting(call, result, preferences)
         );
+        // 启动游戏
+        new MethodChannel(getFlutterView(), START_GAME_CHANNEL).setMethodCallHandler(
+                (MethodCall call, MethodChannel.Result result) -> startGame()
+        );
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        // 在 PostCreate 阶段安装
+        prepareOpenInstall();
     }
 
     @Override
@@ -86,6 +104,7 @@ public class ManagerActivity extends FlutterActivity {
 
             Toast.makeText(this, "导入拓展中...", Toast.LENGTH_SHORT).show();
             try {
+                // TODO: 不阻塞主进程
                 InputStream inputStream = getContentResolver().openInputStream(intent.getData());
                 ZipInputStream zipInputStream = new ZipInputStream(inputStream);
 
@@ -118,12 +137,11 @@ public class ManagerActivity extends FlutterActivity {
 
             String folder = Global.filesDir + File.separator + id;
 
-            // TODO: Metadata 读取
             try {
                 Metadata metadata = ExtensionManager.GetInstance().loadMetadata(folder + File.separator + "extension.json");
                 Log.d(TAG, "Name: " + metadata.getName());
                 Log.d(TAG, "Desc: " + metadata.getDescription());
-                ExtensionManager.GetInstance().load(metadata);
+                ExtensionManager.GetInstance().loadAsync(metadata);
             } catch (FileNotFoundException e) {
                 Log.e(TAG, e.getMessage());
                 Toast.makeText(this, "拓展导入失败！未找到 extension.json！", Toast.LENGTH_SHORT).show();
@@ -138,17 +156,7 @@ public class ManagerActivity extends FlutterActivity {
         }
     }
 
-    boolean isOpeningFile() {
+    private boolean isOpeningFile() {
         return Intent.ACTION_VIEW.equals(getIntent().getAction());
-    }
-
-    private void handleMethodCall(MethodCall call, MethodChannel.Result result) {
-        if (call.method.equals("setting")) {
-            Setting.handleSetting(call, result, preferences);
-        } else if (call.method.equals("startGame")) {
-            this.startGame();
-        }
-
-        result.notImplemented();
     }
 }
