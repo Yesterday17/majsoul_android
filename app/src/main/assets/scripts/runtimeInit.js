@@ -3,14 +3,13 @@ window.conch_File = File;
 window.conch_FileReader = FileReader;
 
 (() => {
-  'use strict';
   function file2path(p) {
     if (!p) return null;
-    const lastpos = Math.max(p.lastIndexOf('/'), p.lastIndexOf('\\'));
-    const ret = lastpos < 0 ? p : p.substr(0, lastpos);
+    var lastpos = Math.max(p.lastIndexOf('/'), p.lastIndexOf('\\'));
+    var ret = lastpos < 0 ? p : p.substr(0, lastpos);
     return ret.replace(/\\/g, '/');
   }
-  const mcache = {};
+  var mcache = {};
   /*起始路径总是这里，如果需要改变的话，就在这里通过require跳转。*/
   window.requireOrig = function(file) {
     function evalRequire(fileContent, fileId) {
@@ -18,7 +17,7 @@ window.conch_FileReader = FileReader;
 
       // 注意：并不是window.eval所以脚本中不能假设当前是在window上下文
       try {
-        const func = eval(
+        var func = eval(
           `(function(exports,global,require,__dirname,__filename){${fileContent};
 return exports;})
 //@ sourceURL=${fileId}`
@@ -32,11 +31,11 @@ return exports;})
       }
     }
 
-    const module = { dir: this.dir, file };
+    var module = { dir: this.dir, file };
     if (!file.endsWith('.js')) file += '.js';
 
     // 优先读取外部文件
-    let extfile = null;
+    var extfile = null;
     if (file.charAt(1) === ':' || file.charAt(0) === '/') {
       extfile = file;
     } else {
@@ -45,8 +44,8 @@ return exports;})
 
     _console.log(3, `[runtimeInit] require(${file})`);
 
-    let extfunc = null;
-    const reqresult =
+    var extfunc = null;
+    var reqresult =
       mcache[extfile] ||
       (extfunc = evalRequire(readFileSync(extfile, 'utf8'), extfile)) ||
       mcache[file] ||
@@ -60,7 +59,7 @@ return exports;})
       throw `require failed：${file}`;
     }
     try {
-      const ret = reqresult(
+      var ret = reqresult(
         {},
         window,
         window.requireOrig.bind(module),
@@ -76,7 +75,7 @@ return exports;})
       throw e;
     }
   };
-  const exepath = file2path(getExePath());
+  var exepath = file2path(getExePath());
   window.require = file => {
     window.requireOrig.call({ dir: `${exepath}/scripts` }, file);
   };
