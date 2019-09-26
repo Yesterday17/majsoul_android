@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:manager/pages/about.dart';
 import 'package:manager/pages/extension.dart';
 import 'package:manager/pages/setting.dart';
@@ -60,9 +61,10 @@ class _ExtensionManagerState extends State<ExtensionManager> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          //
+          MethodChannel('cn.yesterday17.majsoul_android/start_game')
+              .invokeMethod('');
         },
-        tooltip: '进入游戏',
+        tooltip: '启动游戏',
         child: Icon(Icons.play_arrow),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );

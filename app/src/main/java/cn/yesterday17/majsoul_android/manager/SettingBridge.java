@@ -6,7 +6,7 @@ import cn.yesterday17.majsoul_android.Global;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-class Setting {
+class SettingBridge {
     static String SETTING_CHANNEL = "cn.yesterday17.majsoul_android/setting";
 
     static void handleSetting(MethodCall call, MethodChannel.Result result, SharedPreferences preferences) {

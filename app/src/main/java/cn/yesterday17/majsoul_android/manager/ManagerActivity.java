@@ -56,9 +56,9 @@ public class ManagerActivity extends FlutterActivity {
 
         // 注册与 Flutter 交互的通道
         // 修改/读取设置
-        new MethodChannel(getFlutterView(), Setting.SETTING_CHANNEL).setMethodCallHandler(
+        new MethodChannel(getFlutterView(), SettingBridge.SETTING_CHANNEL).setMethodCallHandler(
                 (MethodCall call, MethodChannel.Result result) ->
-                        Setting.handleSetting(call, result, preferences)
+                        SettingBridge.handleSetting(call, result, preferences)
         );
         // 启动游戏
         new MethodChannel(getFlutterView(), START_GAME_CHANNEL).setMethodCallHandler(
