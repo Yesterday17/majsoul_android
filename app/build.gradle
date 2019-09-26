@@ -7,7 +7,7 @@ android {
         }
     }
     compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    buildToolsVersion '29.0.2'
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "cn.yesterday17.majsoul_android"
@@ -26,8 +26,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+}
+
+repositories {
+    maven {
+        url 'manager/build/host/outputs/repo'
+        // This is relative to the location of the build.gradle file
+        // if using a relative path.
     }
 }
 
@@ -42,4 +50,5 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.okhttp3:okhttp:4.2.0'
+    implementation project(':flutter')
 }

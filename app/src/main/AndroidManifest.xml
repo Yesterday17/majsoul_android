@@ -3,6 +3,7 @@
     package="cn.yesterday17.majsoul_android">
 
     <application
+        android:name=".MajsoulApplication"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,6 +19,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -36,11 +38,16 @@
                 <!--<data android:pathPattern=".*\\.mspr\\.mspr" />-->
                 <data android:host="*" />
             </intent-filter>
+
+            <meta-data
+                android:name="io.flutter.Entrypoint"
+                android:value="main" />
         </activity>
 
         <activity
             android:name=".game.GameActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:resizeableActivity="true"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 

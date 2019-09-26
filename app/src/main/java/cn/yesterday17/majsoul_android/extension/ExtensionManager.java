@@ -67,6 +67,11 @@ public class ExtensionManager {
         (metadata.getLoadBeforeGame() ? beforeGame : afterGame).putIfAbsent(metadata.getID(), scripts);
     }
 
+    public Map<String, Metadata> getExtensions() {
+        // TODO: Return clone
+        return allMaps;
+    }
+
     private static String getScripts(Map<String, List<ExtensionScript>> extMap) {
         // TODO: Sort
         StringBuilder builder = new StringBuilder();

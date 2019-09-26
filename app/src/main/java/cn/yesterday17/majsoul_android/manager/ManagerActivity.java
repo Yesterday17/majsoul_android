@@ -3,18 +3,8 @@ package cn.yesterday17.majsoul_android.manager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonParseException;
 
 import java.io.File;
@@ -29,21 +19,19 @@ import cn.yesterday17.majsoul_android.R;
 import cn.yesterday17.majsoul_android.extension.ExtensionManager;
 import cn.yesterday17.majsoul_android.extension.metadata.Metadata;
 import cn.yesterday17.majsoul_android.game.GameActivity;
-import cn.yesterday17.majsoul_android.manager.views.AboutFragment;
-import cn.yesterday17.majsoul_android.manager.views.ExtensionFragment;
-import cn.yesterday17.majsoul_android.manager.views.SettingFragment;
 import cn.yesterday17.majsoul_android.extension.ExtensionFileOutputStream;
+import io.flutter.app.FlutterActivity;
+import io.flutter.plugins.GeneratedPluginRegistrant;
+import io.flutter.view.FlutterMain;
 
-public class ManagerActivity extends AppCompatActivity {
+public class ManagerActivity extends FlutterActivity {
     private final String TAG = "ManagerActivity";
-
-    private BottomNavigationView bottomNavigation;
-    private ViewPager viewPager;
-    FloatingActionButton startGameButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        FlutterMain.startInitialization(this);
         super.onCreate(savedInstanceState);
+        GeneratedPluginRegistrant.registerWith(this);
         initGlobal();
 
         if (!isOpeningFile() && false) {
@@ -51,11 +39,6 @@ public class ManagerActivity extends AppCompatActivity {
             startGame();
         }
 
-
-        setContentView(R.layout.activity_manager);
-
-        initView();
-        prepareStartGame();
         ExtensionManager.GetInstance().init();
         prepareOpenInstall();
 
@@ -70,61 +53,11 @@ public class ManagerActivity extends AppCompatActivity {
     }
 
     void initGlobal() {
-        Global.applicationContext = getApplicationContext();
         Global.dataDir = getDataDir().toString();
         Global.filesDir = getFilesDir().toString();
 
         // TODO: Load Settings here
         Global.gameUrl = getString(R.string.cnGameUrl);
-    }
-
-    void initView() {
-        bottomNavigation = findViewById(R.id.bottom_navigation);
-        viewPager = findViewById(R.id.viewPager);
-
-        bottomNavigation.setOnNavigationItemSelectedListener((MenuItem item) -> {
-            switch (item.getItemId()) {
-                case R.id.tab_extension:
-                    viewPager.setCurrentItem(0);
-                    return true;
-                case R.id.tab_setting:
-                    viewPager.setCurrentItem(1);
-                    return true;
-                case R.id.tab_about:
-                    viewPager.setCurrentItem(2);
-                    return true;
-                default:
-                    return false;
-            }
-        });
-
-        viewPager.setAdapter(new FragmentPagerAdapter(this.getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                switch (position) {
-                    case 0:
-                        return new ExtensionFragment();
-                    case 1:
-                        return new SettingFragment();
-                    case 2:
-                        return new AboutFragment();
-                    default:
-                        return null;
-                }
-            }
-
-            @Override
-            public int getCount() {
-                return 3;
-            }
-        });
-        viewPager.setOnTouchListener((View v, MotionEvent event) -> true);
-    }
-
-    void prepareStartGame() {
-        startGameButton = findViewById(R.id.start_game);
-        startGameButton.setOnClickListener((View view) -> startGame()
-        );
     }
 
     void startGame() {
@@ -198,5 +131,4 @@ public class ManagerActivity extends AppCompatActivity {
         Intent intent = getIntent();
         return intent.ACTION_VIEW.equals(intent.getAction());
     }
-
 }

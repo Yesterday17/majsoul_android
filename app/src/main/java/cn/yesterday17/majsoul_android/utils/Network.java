@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import java.io.IOException;
 
 import cn.yesterday17.majsoul_android.Global;
+import cn.yesterday17.majsoul_android.MajsoulApplication;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
@@ -18,8 +19,10 @@ public class Network {
     private static OkHttpClient client = new OkHttpClient();
 
     public static boolean isOnline() {
-        ConnectivityManager connManager = (ConnectivityManager) Global.applicationContext
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connManager = (ConnectivityManager)
+                MajsoulApplication.getInstance()
+                        .getApplicationContext()
+                        .getSystemService(Context.CONNECTIVITY_SERVICE);
         return connManager.getActiveNetworkInfo() != null
                 && connManager.getActiveNetworkInfo().isAvailable()
                 && connManager.getActiveNetworkInfo().isConnected();
