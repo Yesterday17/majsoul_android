@@ -34,7 +34,7 @@ public class ResourceVersion {
                                     entry.getFrom().forEach((key) ->
                                             resVersion.res.putIfAbsent(
                                                     key,
-                                                    new ResVersionPrefix(entry.getTo())
+                                                    new ResVersionPrefix("v0.0.0.a")
                                             )
                                     )
                             )
