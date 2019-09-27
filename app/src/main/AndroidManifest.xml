@@ -13,7 +13,6 @@
         <activity
             android:name=".manager.ManagerActivity"
             android:launchMode="singleTask"
-            android:resizeableActivity="false"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize"
@@ -33,7 +32,6 @@
         <activity
             android:name=".extension.install.InstallActivity"
             android:launchMode="singleInstance"
-            android:resizeableActivity="false"
             android:theme="@android:style/Theme.Holo.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -58,7 +56,6 @@
         <activity
             android:name=".game.GameActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:resizeableActivity="true"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|adjustPan" />
     </application>

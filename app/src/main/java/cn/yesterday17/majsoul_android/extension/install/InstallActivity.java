@@ -119,10 +119,12 @@ public class InstallActivity extends Activity {
                 String to = StringUtils.Join(parts, "/");
 
                 // 解压缩操作
+                int read;
+                byte[] buffer = new byte[1024];
                 Log.d(TAG, "Unzipping " + to);
                 ExtensionFileOutputStream out = new ExtensionFileOutputStream(installDir, to);
-                for (int c = zipInputStream.read(); c != -1; c = zipInputStream.read()) {
-                    out.write(c);
+                while ((read = zipInputStream.read(buffer)) != -1) {
+                    out.write(buffer, read);
                 }
                 zipInputStream.closeEntry();
                 out.close();

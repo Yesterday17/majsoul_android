@@ -70,7 +70,7 @@ public class MetadataDeserializer implements JsonDeserializer<Metadata> {
                         replaceEntryList.add(new ResourceReplaceEntry(
                                 rep.get("from").getAsString(),
                                 rep.get("to").getAsString(),
-                                rep.get("all-servers").getAsBoolean()
+                                !rep.has("all-servers") || rep.get("all-servers").getAsBoolean()
                         ));
                     } else {
                         List<String> from = new ArrayList<>();
@@ -78,7 +78,7 @@ public class MetadataDeserializer implements JsonDeserializer<Metadata> {
                         replaceEntryList.add(new ResourceReplaceEntry(
                                 from,
                                 rep.get("to").getAsString(),
-                                rep.get("all-servers").getAsBoolean()
+                                !rep.has("all-servers") || rep.get("all-servers").getAsBoolean()
                         ));
                     }
                 }

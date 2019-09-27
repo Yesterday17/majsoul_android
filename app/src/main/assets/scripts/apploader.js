@@ -6388,6 +6388,15 @@ var HTMLAudioElement = (function(_super) {
     },
     set: function(v) {
       v = location.resolve(v);
+      v = (url => {
+        if (regex_resource.test(url)) {
+          var result = regex_resource.exec(url);
+          result = window.LayaExpose.call('resourceReplace', result[1]);
+          return result === '' ? url : result;
+        } else {
+          return url;
+        }
+      })(v);
       this._nativeObj.src = v;
     },
     enumerable: true,

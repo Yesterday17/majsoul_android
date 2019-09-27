@@ -3,7 +3,6 @@ package cn.yesterday17.majsoul_android.extension;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -149,7 +148,7 @@ public class ExtensionManager {
 
                     load(metadata);
                 }
-            } catch (InterruptedException | FileNotFoundException e) {
+            } catch (InterruptedException | FileNotFoundException | JsonParseException e) {
                 Log.e(TAG, e.getMessage());
             }
         });
