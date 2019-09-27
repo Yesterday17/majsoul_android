@@ -1,21 +1,20 @@
+var platform = new Platform('majsoul.LayaExpose');
+
 exports.launch = function() {
   window.loadingView.loading(10);
 
-  fetch('version.json')
-    .then(data => {
+  platform
+    .send('version')
+    .then(version => {
       // 加载到 20%
       window.loadingView.loading(20);
 
-      if (data.status === 200) {
-        return data.json();
-      } else {
-        throw data.status;
-      }
+      return platform.send('code');
     })
-    .then(json => {
-      document.createElement('script').src = json.code;
+    .then(code => {
+      document.createElement('script').text = code;
     })
-    .catch(code => {
-      alert(`加载页面失败: ${code}`);
+    .catch(e => {
+      alert(`错误：${e}。请尝试重新启动游戏！`);
     });
 };

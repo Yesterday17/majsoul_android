@@ -1,6 +1,11 @@
 package cn.yesterday17.majsoul_android;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class Global {
+
+    public static Gson gson = new GsonBuilder().create();
 
     public static String dataDir;
 

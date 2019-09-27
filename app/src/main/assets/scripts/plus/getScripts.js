@@ -1,19 +1,9 @@
-var manager = PlatformClass.createClass(
-  'cn.yesterday17.majsoul_android.extension.ExtensionManager'
-);
-
-function getScripts(name) {
-  return new Promise(function(resolve, reject) {
-    manager.callWithBack(code => {
-      resolve(code);
-    }, name);
-  });
-}
+var platform = new Platform('extension.ExtensionManager');
 
 exports.getBeforeGameScripts = function() {
-  return getScripts('getBeforeGameScripts');
+  return platform.send('getBeforeGameScripts');
 };
 
 exports.getAfterGameScripts = function() {
-  return getScripts('getAfterGameScripts');
+  return platform.send('getAfterGameScripts');
 };

@@ -7,6 +7,9 @@ import android.os.Bundle;
 import cn.yesterday17.majsoul_android.Global;
 import cn.yesterday17.majsoul_android.extension.ExtensionManager;
 import cn.yesterday17.majsoul_android.game.GameActivity;
+import cn.yesterday17.majsoul_android.majsoul.CodeJS;
+import cn.yesterday17.majsoul_android.majsoul.GameVersion;
+import cn.yesterday17.majsoul_android.majsoul.ResourceVersion;
 import io.flutter.app.FlutterActivity;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -32,7 +35,12 @@ public class ManagerActivity extends FlutterActivity {
         // 加载扩展管理器
         ExtensionManager.GetInstance();
 
-        // TODO: 加载部分游戏内容 加快游戏启动
+        // 加载部分游戏内容 加快游戏启动
+        GameVersion.loadVersion(() -> {
+            // ResourceVersion.loadResourceVersion(null);
+            CodeJS.loadCodeJS(null);
+            return null;
+        });
 
         // 判断是否直接进入游戏
         if (Global.directGame) {
@@ -56,7 +64,7 @@ public class ManagerActivity extends FlutterActivity {
         Global.filesDir = getFilesDir().toString();
 
         preferences = getPreferences(SETTINGS_PREF);
-        Global.gameUrl = preferences.getString("game_url", "https://majsoul.union-game.com/app/web/html/index.html");
+        Global.gameUrl = preferences.getString("game_url", "https://majsoul.union-game.com/app/web/html/");
         Global.directGame = preferences.getBoolean("direct_game", false);
     }
 

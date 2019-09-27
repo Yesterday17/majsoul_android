@@ -42,7 +42,7 @@ public class GameActivity extends Activity {
         GameEngine.setIsPlugin(false);
 
         // 加载游戏地址
-        String gameUrl = Global.gameUrl;
+        String gameUrl = Global.gameUrl + "index.html";
         GameEngine.setGameUrl(gameUrl);
         Log.d(TAG_ENGINE, "url = " + gameUrl);
 

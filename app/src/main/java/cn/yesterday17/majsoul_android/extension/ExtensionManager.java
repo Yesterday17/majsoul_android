@@ -27,6 +27,7 @@ import cn.yesterday17.majsoul_android.Global;
 import cn.yesterday17.majsoul_android.extension.metadata.ExtensionScript;
 import cn.yesterday17.majsoul_android.extension.metadata.Metadata;
 import cn.yesterday17.majsoul_android.extension.metadata.MetadataDeserializer;
+import cn.yesterday17.majsoul_android.utils.PlatformClassUtils;
 import cn.yesterday17.majsoul_android.utils.StringUtils;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -187,7 +188,7 @@ public class ExtensionManager {
         new Thread(() -> ExportJavaFunction.CallBackToJS(
                 ExtensionManager.class,
                 "getBeforeGameScripts",
-                getScripts(instance.beforeGame)
+                PlatformClassUtils.genPlatformResponse(null, getScripts(instance.beforeGame))
         )).start();
     }
 
@@ -196,7 +197,7 @@ public class ExtensionManager {
         new Thread(() -> ExportJavaFunction.CallBackToJS(
                 ExtensionManager.class,
                 "getAfterGameScripts",
-                getScripts(instance.afterGame)
+                PlatformClassUtils.genPlatformResponse(null, getScripts(instance.afterGame))
         )).start();
     }
 
