@@ -26,22 +26,39 @@ class ExtensionManager extends StatefulWidget {
   _ExtensionManagerState createState() => _ExtensionManagerState();
 }
 
-class _ExtensionManagerState extends State<ExtensionManager> {
-  int _index = 0;
-  final widgets = <Widget>[ExtensionPage(), SettingPage(), AboutPage()];
+class _ExtensionManagerState extends State<ExtensionManager>
+    with SingleTickerProviderStateMixin {
+  int index = 0;
+  final body = <Widget>[ExtensionPage(), SettingPage(), AboutPage()];
+  TabController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller =
+        new TabController(length: 3, initialIndex: index, vsync: this);
+    _controller.addListener(() {
+      if (!_controller.indexIsChanging) {
+        setState(() {
+          index = _controller.index;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('模组管理器'),
+      body: TabBarView(
+        controller: _controller,
+        children: body,
       ),
-      body: widgets[_index],
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _index,
+        currentIndex: index,
         onTap: (index) {
           setState(() {
-            this._index = index;
+            _controller.animateTo(index);
           });
         },
         items: [

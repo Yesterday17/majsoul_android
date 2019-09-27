@@ -33,39 +33,45 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('模组管理器'),
+      ),
+      body: Container(
         child: ListView(
-      children: <Widget>[
-        SwitchListTile(
-          title: Text('直接进入游戏'),
-          subtitle: Text('但会有一个悬浮窗。'),
-          value: directGame,
-          onChanged: (value) {
-            setState(() {
-              directGame = value;
-              platform.invokeMethod(
-                  'set', {'key': 'directGame', 'value': directGame});
-            });
-          },
+          children: <Widget>[
+            SwitchListTile(
+              title: Text('直接进入游戏'),
+              subtitle: Text('但会有一个悬浮窗。'),
+              value: directGame,
+              onChanged: (value) {
+                setState(() {
+                  directGame = value;
+                  platform.invokeMethod(
+                      'set', {'key': 'directGame', 'value': directGame});
+                });
+              },
+            ),
+            ListTile(
+                title: Text('修改游戏地址'),
+                subtitle: Text('不建议手动修改'),
+                onTap: () {
+                  showDialog(
+                    builder: (context) => PromotDialog(
+                      title: '修改游戏地址',
+                      initialValue: gameUrl,
+                      onSubmit: (text) {
+                        gameUrl = text;
+                        platform.invokeMethod(
+                            'set', {'key': 'gameUrl', 'value': gameUrl});
+                      },
+                    ),
+                    context: context,
+                  );
+                }),
+          ],
         ),
-        ListTile(
-            title: Text('修改游戏地址'),
-            subtitle: Text('不建议手动修改'),
-            onTap: () {
-              showDialog(
-                builder: (context) => PromotDialog(
-                  title: '修改游戏地址',
-                  initialValue: gameUrl,
-                  onSubmit: (text) {
-                    gameUrl = text;
-                    platform.invokeMethod(
-                        'set', {'key': 'gameUrl', 'value': gameUrl});
-                  },
-                ),
-                context: context,
-              );
-            }),
-      ],
-    ));
+      ),
+    );
   }
 }
