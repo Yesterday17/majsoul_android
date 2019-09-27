@@ -21,7 +21,9 @@ class _SettingPageState extends State<SettingPage> {
       platform.invokeMethod(
           'get', {'key': 'directGame'}).then((direct) => directGame = direct)
     ]);
-    setState(() {});
+    try {
+      setState(() {});
+    } catch (e) {}
   }
 
   @override

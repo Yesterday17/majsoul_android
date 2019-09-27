@@ -29,7 +29,6 @@ class ExtensionManager extends StatefulWidget {
 class _ExtensionManagerState extends State<ExtensionManager>
     with SingleTickerProviderStateMixin {
   int index = 0;
-  final body = <Widget>[ExtensionPage(), SettingPage(), AboutPage()];
   TabController _controller;
 
   @override
@@ -52,7 +51,7 @@ class _ExtensionManagerState extends State<ExtensionManager>
     return Scaffold(
       body: TabBarView(
         controller: _controller,
-        children: body,
+        children: <Widget>[ExtensionPage(), SettingPage(), AboutPage()],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: index,
