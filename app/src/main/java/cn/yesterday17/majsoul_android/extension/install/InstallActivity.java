@@ -46,20 +46,26 @@ public class InstallActivity extends Activity {
         install();
     }
 
+    private void Toast(String text) {
+        runOnUiThread(() -> Toast.makeText(this, text, Toast.LENGTH_SHORT).show());
+    }
+
     /**
      * 安装扩展的总流程
      */
     void install() {
         Intent intent = getIntent();
 
-        preInstall(intent);
+        new Thread(() -> {
+            preInstall(intent);
 
-        Log.d(TAG, intent.getDataString());
-        Toast.makeText(this, "导入扩展中...", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, intent.getDataString());
+            Toast("导入扩展中...");
 
-        doInstall(intent);
+            doInstall(intent);
 
-        postInstall();
+            postInstall();
+        }).start();
     }
 
     /**
@@ -70,7 +76,7 @@ public class InstallActivity extends Activity {
     void preInstall(Intent intent) {
         if (intent.getDataString() == null) {
             Log.e(TAG, "intent.getDataString() is null");
-            Toast.makeText(this, "非法输入！", Toast.LENGTH_SHORT).show();
+            Toast("非法输入！");
         }
     }
 
@@ -105,7 +111,7 @@ public class InstallActivity extends Activity {
 
                     if (!idUniqueCheck) {
                         // ID 不唯一
-                        Toast.makeText(this, "扩展" + id + "已存在！暂不支持更新操作。", Toast.LENGTH_SHORT).show();
+                        Toast("扩展" + id + "已存在！暂不支持更新操作。");
                         return;
                     }
                 }
@@ -131,7 +137,8 @@ public class InstallActivity extends Activity {
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
-            Toast.makeText(this, "扩展导入失败！" + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast("扩展导入失败！");
+            FileSystem.rmRF(installDir + File.separator + id);
             return;
         }
 
@@ -142,11 +149,13 @@ public class InstallActivity extends Activity {
             Log.d(TAG, "Loaded extension: " + metadata.getName());
         } catch (FileNotFoundException e) {
             Log.e(TAG, e.getMessage());
-            Toast.makeText(this, "扩展打包格式错误！", Toast.LENGTH_SHORT).show();
+            Toast("扩展打包格式错误！");
+            FileSystem.rmRF(folder);
             return;
         } catch (JsonParseException e) {
             Log.e(TAG, e.getMessage());
-            Toast.makeText(this, "扩展描述文件格式错误！", Toast.LENGTH_SHORT).show();
+            Toast("扩展描述文件格式错误！");
+            FileSystem.rmRF(folder);
             return;
         }
 
@@ -163,13 +172,13 @@ public class InstallActivity extends Activity {
         } else if (Global.isGameRunning) {
             afterTip = "请重新启动游戏以加载新导入扩展！";
         }
-        Toast.makeText(this, "扩展" + id + "导入成功！" + afterTip, Toast.LENGTH_SHORT).show();
+        Toast("扩展" + id + "导入成功！" + afterTip);
     }
 
     /**
      * 在处理完后快速销毁
      */
     void postInstall() {
-        finish();
+        runOnUiThread(() -> finish());
     }
 }

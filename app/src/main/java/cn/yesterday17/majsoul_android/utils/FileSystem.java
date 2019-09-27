@@ -12,4 +12,16 @@ public class FileSystem {
         }
         return true;
     }
+
+    public static void rmRF(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+                rmRF(child);
+
+        fileOrDirectory.delete();
+    }
+
+    public static void rmRF(String path) {
+        rmRF(new File(path));
+    }
 }
