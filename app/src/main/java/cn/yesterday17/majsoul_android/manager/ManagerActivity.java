@@ -35,17 +35,17 @@ public class ManagerActivity extends FlutterActivity {
         // 加载扩展管理器
         ExtensionManager.GetInstance();
 
-        // 加载部分游戏内容 加快游戏启动
-        GameVersion.loadVersion(() -> {
-            // ResourceVersion.loadResourceVersion(null);
-            CodeJS.loadCodeJS(null);
-            return null;
-        });
-
         // 判断是否直接进入游戏
         if (Global.directGame) {
             startGame();
         }
+
+        // 进入管理器的情况下 加载部分游戏内容 加快游戏启动
+        GameVersion.loadVersion(() -> {
+            ResourceVersion.loadResourceVersion(null);
+            CodeJS.loadCodeJS(null);
+            return null;
+        });
 
         // 注册与 Flutter 交互的通道
         initMethodChannels();

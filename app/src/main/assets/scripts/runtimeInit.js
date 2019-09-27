@@ -79,7 +79,4 @@ return exports;})
   window.require = file => {
     window.requireOrig.call({ dir: `${exepath}/scripts` }, file);
   };
-  window.requireLocal = file => {
-    window.requireOrig.call({ dir: '/sdcard/majsoul/scripts' }, file);
-  };
 })();

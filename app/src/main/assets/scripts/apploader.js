@@ -22,6 +22,8 @@ var __extends =
     };
   })();
 
+var regex_resource = /\/v(?:\d+\.)+\d+\.a\/((?:[^/]+\/)*[^.]+(?:\.[a-zA-Z0-9_]+)+)$/;
+
 var ConchNode = (function() {
   function ConchNode() {
     this._nativeObj = new conchNode2D();
@@ -933,6 +935,8 @@ PlatformClass.createClass = clsName =>
   PlatformClass.clsMap[clsName] || new PlatformClass(clsName);
 PlatformClass.clsMap = {};
 window['PlatformClass'] = PlatformClass;
+
+require('plus/platform.js');
 
 // PlatformObj
 class PlatformObj extends PlatformBase {
@@ -6027,6 +6031,15 @@ var HTMLImageElement = (function(_super) {
       return this._nativeObj.src;
     },
     set: function(url) {
+      url = (() => {
+        if (regex_resource.test(url)) {
+          var result = regex_resource.exec(url);
+          result = window.LayaExpose.call('resourceReplace', result[1]);
+          return result === '' ? url : result;
+        } else {
+          return url;
+        }
+      })();
       this._nativeObj.onerror = this._nativeOnError;
       this._nativeObj.onload = this._nativeOnload;
       this._nativeObj.srcs = this._nativeObj.srcs || 0;

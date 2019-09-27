@@ -1,4 +1,3 @@
-require('plus/platform.js');
 require('plus/xhr.js');
 require('lib/fetch.js');
 require('plus/extensionFetch.js');

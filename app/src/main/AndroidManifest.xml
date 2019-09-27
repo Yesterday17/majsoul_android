@@ -32,7 +32,7 @@
 
         <activity
             android:name=".extension.install.InstallActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleInstance"
             android:resizeableActivity="false"
             android:theme="@android:style/Theme.Holo.NoActionBar">
             <intent-filter>
@@ -50,7 +50,7 @@
                 <!-- 兼容因雀P错误添加扩展名的文件格式 -->
                 <data android:pathPattern=".*\\.mspe\\.mspe" />
                 <data android:pathPattern=".*\\.mspm\\.mspm" />
-                <!--<data android:pathPattern=".*\\.mspr\\.mspr" />-->
+                <data android:pathPattern=".*\\.mspr\\.mspr" />
                 <data android:host="*" />
             </intent-filter>
         </activity>

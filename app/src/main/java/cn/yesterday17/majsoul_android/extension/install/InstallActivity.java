@@ -23,6 +23,7 @@ import cn.yesterday17.majsoul_android.extension.ExtensionFileOutputStream;
 import cn.yesterday17.majsoul_android.extension.ExtensionManager;
 import cn.yesterday17.majsoul_android.extension.metadata.Metadata;
 import cn.yesterday17.majsoul_android.utils.FileSystem;
+import cn.yesterday17.majsoul_android.utils.StringUtils;
 
 /**
  * 从 ManagerActivity 分离出的 Activity
@@ -101,11 +102,12 @@ public class InstallActivity extends Activity {
                 if (!idUniqueCheck) {
                     id = parts[0];
                     idUniqueCheck = FileSystem.isIDUnique(installDir, id);
-                }
-                if (!idUniqueCheck) {
-                    // ID 不唯一
-                    Toast.makeText(this, "扩展" + id + "已存在！暂不支持更新操作。", Toast.LENGTH_SHORT).show();
-                    return;
+
+                    if (!idUniqueCheck) {
+                        // ID 不唯一
+                        Toast.makeText(this, "扩展" + id + "已存在！暂不支持更新操作。", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                 }
 
                 // 对资源包(resource pack)进行兼容操作
@@ -114,9 +116,11 @@ public class InstallActivity extends Activity {
                     parts[1] = Constants.EXTENSION_METADATA_FILENAME;
                 }
 
+                String to = StringUtils.Join(parts, "/");
+
                 // 解压缩操作
-                Log.d(TAG, "Unzipping " + entry.getName());
-                ExtensionFileOutputStream out = new ExtensionFileOutputStream(installDir, entry.getName());
+                Log.d(TAG, "Unzipping " + to);
+                ExtensionFileOutputStream out = new ExtensionFileOutputStream(installDir, to);
                 for (int c = zipInputStream.read(); c != -1; c = zipInputStream.read()) {
                     out.write(c);
                 }
