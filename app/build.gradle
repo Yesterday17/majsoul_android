@@ -23,7 +23,7 @@ android {
             enable true
             reset()
             include "arm64-v8a", "armeabi-v7a"
-            universalApk false
+            universalApk true
         }
     }
 
@@ -42,10 +42,12 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             multiDexEnabled = false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            debuggable = false
         }
     }
 

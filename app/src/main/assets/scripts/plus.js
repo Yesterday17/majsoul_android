@@ -7,8 +7,9 @@ var Babel = require('lib/babel.min.js').Babel;
 
 window.Majsoul_Plus = {};
 
-var loadUrl = require('index').loadUrl;
-var launch = require('launch').launch;
+require('config.js');
+var loadUrl = require('index.js').loadUrl;
+var launch = require('launch.js').launch;
 
 loadUrl().then(() => {
   Promise.all([scripts.getBeforeGameScripts(), scripts.getAfterGameScripts()])

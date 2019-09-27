@@ -1,5 +1,8 @@
 package cn.yesterday17.majsoul_android.extension.metadata;
 
+import androidx.annotation.Keep;
+
+@Keep
 public enum EnumGameServer {
     CHINA(0),
     JAPAN(1),

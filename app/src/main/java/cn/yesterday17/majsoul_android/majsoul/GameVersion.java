@@ -2,6 +2,8 @@ package cn.yesterday17.majsoul_android.majsoul;
 
 import android.util.Log;
 
+import androidx.annotation.Keep;
+
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
@@ -38,6 +40,7 @@ public class GameVersion {
         }).start();
     }
 
+    @Keep
     static class GameVersionJson {
         String code;
         String version;

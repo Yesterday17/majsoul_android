@@ -11,9 +11,11 @@ import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.Keep;
+
 import cn.yesterday17.majsoul_android.R;
 
-
+@Keep
 public class SplashDialog extends Dialog {
     private static String[] tips = new String[4];
     private static int tipIndex = 0;

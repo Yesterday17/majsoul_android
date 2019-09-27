@@ -2,6 +2,8 @@ package cn.yesterday17.majsoul_android.majsoul;
 
 import android.util.Log;
 
+import androidx.annotation.Keep;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,10 +58,12 @@ public class ResourceVersion {
         }).start();
     }
 
+    @Keep
     static class ResVersionJson {
         Map<String, ResVersionPrefix> res = new HashMap<>();
     }
 
+    @Keep
     static class ResVersionPrefix {
         String prefix;
 

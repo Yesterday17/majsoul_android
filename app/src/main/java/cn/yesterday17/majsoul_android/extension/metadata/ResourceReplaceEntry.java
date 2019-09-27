@@ -1,9 +1,11 @@
 package cn.yesterday17.majsoul_android.extension.metadata;
 
+import androidx.annotation.Keep;
+
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Keep
 public class ResourceReplaceEntry {
     private List<String> from;
     private String to;

@@ -1,5 +1,7 @@
 package cn.yesterday17.majsoul_android.extension.metadata;
 
+import androidx.annotation.Keep;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Keep
 public class Metadata implements IMetadata, IResourcePackMetadata, IExtensionMetadata {
     String id;
     String version;

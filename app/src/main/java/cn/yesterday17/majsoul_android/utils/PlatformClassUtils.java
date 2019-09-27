@@ -1,5 +1,7 @@
 package cn.yesterday17.majsoul_android.utils;
 
+import androidx.annotation.Keep;
+
 import static cn.yesterday17.majsoul_android.Global.gson;
 
 public class PlatformClassUtils {
@@ -11,6 +13,7 @@ public class PlatformClassUtils {
         return genPlatformResponse(new PlatformResponse(err, data));
     }
 
+    @Keep
     static class PlatformResponse {
         private String err;
         private Object data;

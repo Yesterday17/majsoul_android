@@ -2,6 +2,7 @@ package cn.yesterday17.majsoul_android.extension;
 
 import android.util.Log;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
@@ -32,6 +33,7 @@ import cn.yesterday17.majsoul_android.utils.StringUtils;
 import io.flutter.plugin.common.MethodCall;
 import layaair.game.browser.ExportJavaFunction;
 
+@Keep
 public class ExtensionManager {
     private static String TAG = "ExtensionManager";
     private Map<String, Metadata> allMaps = new HashMap<>();

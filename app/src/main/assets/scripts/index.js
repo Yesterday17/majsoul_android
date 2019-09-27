@@ -327,11 +327,6 @@ function loadUrl(url) {
     let cache = (window.appcache = new AppCache(urlpath));
     document.loadCookie();
     yield initFreeType();
-    try {
-      require('config');
-    } catch (e) {
-      console.error(e);
-    }
     let isDccOk = true;
     if (_inline) {
       yield updateDcc();
