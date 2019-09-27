@@ -11,6 +11,7 @@ public class ResourceReplace {
     private static Map<String, String> resReplaceMap = new HashMap<>();
 
     public static void initReplaceCache(Map<String, Metadata> extensions) {
+        resReplaceMap.clear();
         extensions.values().forEach(metadata ->
                 metadata.getReplace().forEach(entry ->
                         entry.getFrom().forEach(

@@ -52,9 +52,16 @@ class _ExtensionPageState extends State<ExtensionPage> {
     });
   }
 
+  void removeExtension(String id) {
+    setState(() {
+      extensions.remove(id);
+      platform.invokeMethod('delete', {'id': id});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var exts;
+    List<Extension> exts;
     return Scaffold(
       appBar: AppBar(
         title: Text('模组管理器'),
@@ -66,9 +73,7 @@ class _ExtensionPageState extends State<ExtensionPage> {
         ],
       ),
       body: extensions == null
-          ? Center(
-              child: Text('加载扩展列表中'),
-            )
+          ? Center(child: CircularProgressIndicator())
           : ListView.builder(
               itemCount: extensions.length,
               itemBuilder: (context, index) {
@@ -83,6 +88,10 @@ class _ExtensionPageState extends State<ExtensionPage> {
                             contentPadding:
                                 EdgeInsets.only(top: 8.0, bottom: 8.0),
                             onTap: () {},
+                            onLongPress: () {
+                              // 长按删除
+                              removeExtension(ext.id);
+                            },
                             leading: Checkbox(
                               value: true,
                               onChanged: (value) {},

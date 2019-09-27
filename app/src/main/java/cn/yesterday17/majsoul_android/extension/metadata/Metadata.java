@@ -119,7 +119,7 @@ public class Metadata implements IMetadata, IResourcePackMetadata, IExtensionMet
     // ResourcePack Part
     @Override
     public boolean isResourcePack() {
-        return this.scripts == null;
+        return this.scripts.size() == 0;
     }
 
     @Override

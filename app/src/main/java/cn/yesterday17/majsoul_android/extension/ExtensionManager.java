@@ -26,10 +26,11 @@ import cn.yesterday17.majsoul_android.Global;
 import cn.yesterday17.majsoul_android.extension.metadata.ExtensionScript;
 import cn.yesterday17.majsoul_android.extension.metadata.Metadata;
 import cn.yesterday17.majsoul_android.extension.metadata.MetadataDeserializer;
+import cn.yesterday17.majsoul_android.majsoul.ResourceReplace;
+import cn.yesterday17.majsoul_android.utils.FileSystem;
 import cn.yesterday17.majsoul_android.utils.PlatformClassUtils;
 import cn.yesterday17.majsoul_android.utils.StringUtils;
 import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
 import layaair.game.browser.ExportJavaFunction;
 
 public class ExtensionManager {
@@ -125,6 +126,17 @@ public class ExtensionManager {
         return gson.fromJson(new FileReader(folder + File.separator + Constants.EXTENSION_METADATA_FILENAME), Metadata.class);
     }
 
+    public void removeExtension(String id) {
+        if (id == null) return;
+        if (!allMaps.containsKey(id)) return;
+
+        allMaps.remove(id);
+        beforeGame.remove(id);
+        afterGame.remove(id);
+        ResourceReplace.initReplaceCache(allMaps);
+        FileSystem.rmRF(Global.filesDir + File.separator + id);
+    }
+
     /**
      * 获得当前加载的所有扩展
      * TODO: 返回当前 allMap 的 clone
@@ -207,6 +219,12 @@ public class ExtensionManager {
             if (call.method.equals("getList")) {
                 ExtensionManager.GetInstance().waitForLoaded(() -> {
                     callback.apply(genExtensionDataMap());
+                    return null;
+                });
+            } else if (call.method.equals("delete") && call.hasArgument("id")) {
+                ExtensionManager.GetInstance().waitForLoaded(() -> {
+                    ExtensionManager.GetInstance().removeExtension(call.argument("id"));
+                    callback.apply(true);
                     return null;
                 });
             } else {
