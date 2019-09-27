@@ -30,7 +30,7 @@ public class ManagerActivity extends FlutterActivity {
         initGlobal();
 
         // 加载扩展管理器
-        ExtensionManager.GetInstance().initAsync();
+        ExtensionManager.GetInstance();
 
         // TODO: 加载部分游戏内容 加快游戏启动
 
@@ -69,7 +69,18 @@ public class ManagerActivity extends FlutterActivity {
         // 管理扩展
         new MethodChannel(getFlutterView(), ExtensionManager.ExtensionBridge.EXTENSION_CHANNEL).setMethodCallHandler(
                 (MethodCall call, MethodChannel.Result result) ->
-                        ExtensionManager.ExtensionBridge.handleExtension(call, result)
+                        ExtensionManager.ExtensionBridge.handleExtension(call,
+                                (Object data) -> {
+                                    runOnUiThread(() -> {
+                                        if (data != null) {
+                                            result.success(data);
+                                        } else {
+                                            result.notImplemented();
+                                        }
+                                    });
+                                    return null;
+                                }
+                        )
         );
         // 启动游戏
         new MethodChannel(getFlutterView(), START_GAME_CHANNEL).setMethodCallHandler(

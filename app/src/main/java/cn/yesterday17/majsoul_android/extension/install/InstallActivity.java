@@ -26,7 +26,6 @@ import cn.yesterday17.majsoul_android.utils.FileSystem;
 
 /**
  * 从 ManagerActivity 分离出的 Activity
- * <p>
  * 负责处理扩展内容的安装
  */
 public class InstallActivity extends Activity {
@@ -38,16 +37,17 @@ public class InstallActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         install();
-        postInstall();
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         install();
-        postInstall();
     }
 
+    /**
+     * 安装扩展的总流程
+     */
     void install() {
         Intent intent = getIntent();
 
@@ -55,7 +55,6 @@ public class InstallActivity extends Activity {
 
         Log.d(TAG, intent.getDataString());
         Toast.makeText(this, "导入扩展中...", Toast.LENGTH_SHORT).show();
-
 
         doInstall(intent);
 
@@ -65,20 +64,19 @@ public class InstallActivity extends Activity {
     /**
      * 处理安装前事务
      *
-     * @param intent
+     * @param intent Activity 的 Intent
      */
     void preInstall(Intent intent) {
         if (intent.getDataString() == null) {
             Log.e(TAG, "intent.getDataString() is null");
             Toast.makeText(this, "非法输入！", Toast.LENGTH_SHORT).show();
-            return;
         }
     }
 
     /**
      * 正式的安装工作
      *
-     * @param intent
+     * @param intent Activity 的 Intent
      */
     void doInstall(Intent intent) {
         String installDir = getFilesDir().toString();
@@ -86,7 +84,6 @@ public class InstallActivity extends Activity {
         boolean idUniqueCheck = false;
 
         try {
-            // TODO: 不阻塞主进程
             InputStream inputStream = getContentResolver().openInputStream(intent.getData());
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
 
@@ -133,10 +130,9 @@ public class InstallActivity extends Activity {
         }
 
         String folder = installDir + File.separator + id;
-        Metadata metadata;
 
         try {
-            metadata = ExtensionManager.loadMetadata(folder);
+            Metadata metadata = ExtensionManager.loadMetadata(folder);
             Log.d(TAG, "Loaded extension: " + metadata.getName());
         } catch (FileNotFoundException e) {
             Log.e(TAG, e.getMessage());
@@ -149,9 +145,9 @@ public class InstallActivity extends Activity {
         }
 
         // 当 Manager 状态下
-        // 将扩展导入至 ExtensionManager
+        // 将扩展加入加载队列
         if (Global.isManagerRunning) {
-            ExtensionManager.GetInstance().loadAsync(metadata);
+            ExtensionManager.GetInstance().loadExtension(new File(folder));
         }
 
         // 导入成功后提示用户

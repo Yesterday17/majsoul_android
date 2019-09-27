@@ -10,6 +10,8 @@ import java.io.IOException;
 import cn.yesterday17.majsoul_android.Global;
 
 public class ExtensionScript {
+    private static final String TAG = "ExtensionScript";
+
     private String path;
     private boolean isRemote;
 
@@ -43,7 +45,7 @@ public class ExtensionScript {
             }
             this.content = content.toString();
             this.loaded = true;
-        }).run();
+        }).start();
     }
 
     private void readFromRemote() {
@@ -53,7 +55,13 @@ public class ExtensionScript {
     }
 
     public String getScript() {
-        while (!this.loaded) ;
+        while (!this.loaded) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Log.e(TAG, e.getMessage());
+            }
+        }
         return "  try {\n" + this.content + "\n" +
                 "  } catch(e) {\n" +
                 "    alert(e);\n" +

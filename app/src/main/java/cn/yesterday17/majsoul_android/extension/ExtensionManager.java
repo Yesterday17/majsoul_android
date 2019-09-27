@@ -2,6 +2,7 @@ package cn.yesterday17.majsoul_android.extension;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -13,9 +14,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Function;
 
 import cn.yesterday17.majsoul_android.Constants;
 import cn.yesterday17.majsoul_android.Global;
@@ -33,12 +38,14 @@ public class ExtensionManager {
     private Map<String, List<ExtensionScript>> beforeGame = new HashMap<>();
     private Map<String, List<ExtensionScript>> afterGame = new HashMap<>();
 
+    private BlockingQueue<File> loadQueue = new LinkedBlockingQueue<>();
+    private List<Thread> loadThreadList = new LinkedList<>();
+
     private static Gson gson = new GsonBuilder()
             .registerTypeHierarchyAdapter(Metadata.class, new MetadataDeserializer())
             .create();
 
     private static ExtensionManager instance;
-    private boolean loaded = false;
 
     public static ExtensionManager GetInstance() {
         if (instance == null) {
@@ -47,83 +54,116 @@ public class ExtensionManager {
         return instance;
     }
 
-    /**
-     * Makesure it runs in a new thread!!!
-     */
-    private void init() {
-        if (loaded) return;
-
+    private ExtensionManager() {
+        // 将现有的所有扩展加入加载队列
         File[] extensions = new File(Global.filesDir).listFiles();
         for (File f : extensions) {
             if (f.isDirectory()) {
-                try {
-                    Metadata meta = loadMetadata(f.getAbsolutePath());
-                    Log.d(TAG, meta.getName());
-                    this.load(meta);
-                } catch (FileNotFoundException e) {
-                    Log.e(TAG, f.getAbsolutePath());
-                }
+                loadExtension(f);
             }
         }
-        loaded = true;
+        // 默认只有一个加载线程
+        addLoadThread();
     }
 
-    public void initAsync() {
-        initAsync(null);
-    }
-
-    public void initAsync(@Nullable Callable<Void> callback) {
+    /**
+     * 等待扩展管理器完成加载后调用回调函数
+     *
+     * @param callback 回调函数
+     */
+    public void waitForLoaded(@NonNull Callable<Void> callback) {
         new Thread(() -> {
-            this.init();
             try {
-                if (callback != null) {
-                    callback.call();
+                while (!loadQueue.isEmpty()) {
+                    Thread.sleep(100);
                 }
+                callback.call();
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
-        }).run();
+        }).start();
     }
 
-    public static Metadata loadMetadata(String folder) throws FileNotFoundException, JsonParseException {
-        return gson.fromJson(new FileReader(folder + File.separator + Constants.EXTENSION_METADATA_FILENAME), Metadata.class);
+    /**
+     * 加载目录对应的扩展
+     *
+     * @param folder 扩展目录
+     */
+    public void loadExtension(File folder) {
+        try {
+            loadQueue.put(folder);
+        } catch (InterruptedException e) {
+            Log.e(TAG, folder.getAbsolutePath());
+        }
     }
 
-    public void loadAsync(Metadata metadata) {
-        loadAsync(metadata, null);
-    }
-
-    public void loadAsync(Metadata metadata, @Nullable Callable<Void> callback) {
-        new Thread(() -> {
-            this.load(metadata);
-            try {
-                if (callback != null) {
-                    callback.call();
-                }
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-            }
-        }).run();
-    }
-
-    private void load(Metadata metadata) {
-        // we assert loaded == true here
-
-        this.loaded = false;
+    /**
+     * 通过 Metadata 进行脚本的加载
+     * <b>必须</b>运行在新的线程中
+     *
+     * @param metadata 扩展的 Metadata
+     */
+    private void load(@NonNull Metadata metadata) {
         metadata.handleDefaults();
         allMaps.putIfAbsent(metadata.getID(), metadata);
 
         List<ExtensionScript> scripts = new ArrayList<>();
         metadata.getScripts().forEach((script) -> scripts.add(new ExtensionScript(metadata.getID(), script)));
         (metadata.getLoadBeforeGame() ? beforeGame : afterGame).putIfAbsent(metadata.getID(), scripts);
-        this.loaded = true;
     }
 
+    /**
+     * 加载扩展的 Metadata
+     * 只应该在加载线程中运行
+     *
+     * @param folder 目录名 也就是扩展名
+     * @return 扩展解析完成的 Metadata
+     * @throws FileNotFoundException 文件不存在
+     * @throws JsonParseException    解析出错
+     */
+    public static Metadata loadMetadata(String folder) throws FileNotFoundException, JsonParseException {
+        return gson.fromJson(new FileReader(folder + File.separator + Constants.EXTENSION_METADATA_FILENAME), Metadata.class);
+    }
+
+    /**
+     * 获得当前加载的所有扩展
+     * TODO: 返回当前 allMap 的 clone
+     *
+     * @return 当前加载的所有扩展
+     */
     public Map<String, Metadata> getExtensions() {
-        // TODO: Return clone
         return allMaps;
     }
 
+    /**
+     * 新增加一个加载线程
+     */
+    private void addLoadThread() {
+        Thread th = new Thread(() -> {
+            File f;
+            try {
+                while ((f = loadQueue.take()) != null) {
+                    Metadata metadata = loadMetadata(f.getAbsolutePath());
+                    Log.d(TAG, metadata.getName());
+
+                    load(metadata);
+                }
+            } catch (InterruptedException | FileNotFoundException e) {
+                Log.e(TAG, e.getMessage());
+            }
+        });
+        th.setDaemon(true);
+        th.start();
+        loadThreadList.add(th);
+    }
+
+    /**
+     * 获得对应 extMap 的所有脚本
+     * <b>必须</b> 在新线程中运行
+     *
+     * @param extMap 对应 Map
+     * @return 所有脚本构成的字符串
+     */
     private static String getScripts(Map<String, List<ExtensionScript>> extMap) {
         // TODO: Sort
         StringBuilder builder = new StringBuilder();
@@ -148,7 +188,7 @@ public class ExtensionManager {
                 ExtensionManager.class,
                 "getBeforeGameScripts",
                 getScripts(instance.beforeGame)
-        )).run();
+        )).start();
     }
 
     @SuppressWarnings("unused")
@@ -157,20 +197,20 @@ public class ExtensionManager {
                 ExtensionManager.class,
                 "getAfterGameScripts",
                 getScripts(instance.afterGame)
-        )).run();
+        )).start();
     }
 
     public static class ExtensionBridge {
         public static String EXTENSION_CHANNEL = "cn.yesterday17.majsoul_android/extension";
 
-        public static void handleExtension(MethodCall call, MethodChannel.Result result) {
+        public static void handleExtension(MethodCall call, Function<Object, Void> callback) {
             if (call.method.equals("getList")) {
-                ExtensionManager.GetInstance().initAsync(() -> {
-                    result.success(genExtensionDataMap());
+                ExtensionManager.GetInstance().waitForLoaded(() -> {
+                    callback.apply(genExtensionDataMap());
                     return null;
                 });
             } else {
-                result.notImplemented();
+                callback.apply(null);
             }
         }
 
