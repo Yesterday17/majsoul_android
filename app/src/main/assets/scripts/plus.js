@@ -1,4 +1,4 @@
-require('plus/object_entries.js');
+require('lib/object_entries.js');
 require('plus/xhr.js');
 require('lib/fetch.js');
 require('plus/extensionFetch.js');
@@ -23,6 +23,7 @@ loadUrl().then(() => {
       )
     )
     .then(es5 => {
+      Babel = undefined; // 释放 Babel
       eval(es5[0]);
       launch();
       eval(
