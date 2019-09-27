@@ -2,6 +2,8 @@ package cn.yesterday17.majsoul_android.game;
 
 import cn.yesterday17.majsoul_android.Global;
 import cn.yesterday17.majsoul_android.R;
+import cn.yesterday17.majsoul_android.extension.ExtensionManager;
+import cn.yesterday17.majsoul_android.majsoul.ResourceReplace;
 import layaair.game.conch.ILayaEventListener;
 import layaair.game.conch.LayaConch5;
 
@@ -31,6 +33,9 @@ public class GameActivity extends Activity {
         this.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        // 在正式开始加载游戏前对资源进行缓存
+        ResourceReplace.initReplaceCache(ExtensionManager.GetInstance().getExtensions());
 
         // 加载界面
         new SplashDialog(this).showSplash();

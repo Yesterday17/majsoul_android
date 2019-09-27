@@ -40,9 +40,6 @@ public class ResourceVersion {
                             )
                     );
 
-                    // 对资源进行缓存
-                    ResourceReplace.initReplaceCache(extensions);
-
                     error = null;
                 }
             } catch (IOException e) {

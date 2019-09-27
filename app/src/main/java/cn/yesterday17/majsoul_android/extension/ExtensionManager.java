@@ -26,7 +26,6 @@ import cn.yesterday17.majsoul_android.Global;
 import cn.yesterday17.majsoul_android.extension.metadata.ExtensionScript;
 import cn.yesterday17.majsoul_android.extension.metadata.Metadata;
 import cn.yesterday17.majsoul_android.extension.metadata.MetadataDeserializer;
-import cn.yesterday17.majsoul_android.majsoul.ResourceReplace;
 import cn.yesterday17.majsoul_android.utils.FileSystem;
 import cn.yesterday17.majsoul_android.utils.PlatformClassUtils;
 import cn.yesterday17.majsoul_android.utils.StringUtils;
@@ -133,7 +132,6 @@ public class ExtensionManager {
         allMaps.remove(id);
         beforeGame.remove(id);
         afterGame.remove(id);
-        ResourceReplace.initReplaceCache(allMaps);
         FileSystem.rmRF(Global.filesDir + File.separator + id);
     }
 
