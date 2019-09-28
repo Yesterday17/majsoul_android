@@ -1,10 +1,13 @@
 package layaair.majsoul;
 
+import androidx.annotation.Keep;
+
 import cn.yesterday17.majsoul_android.utils.Application;
 import cn.yesterday17.majsoul_android.utils.ClipBoard;
 import layaair.game.browser.ExportJavaFunction;
 
 @SuppressWarnings("unused")
+@Keep
 public class mjmgr {
     public void getAppConfig() {
         ExportJavaFunction.CallBackToJS(this, "getAppConfig", "{}");
