@@ -135,6 +135,13 @@ public class InstallActivity extends Activity {
                 zipInputStream.closeEntry();
                 out.close();
             }
+            if (id.equals("")) {
+                throw (new UnsupportedOperationException("id cannot be empty!"));
+            }
+        } catch (UnsupportedOperationException e) {
+            Log.e(TAG, e.getMessage());
+            Toast("扩展打包格式错误！");
+            return;
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
             Toast("扩展导入失败！");
@@ -149,7 +156,7 @@ public class InstallActivity extends Activity {
             Log.d(TAG, "Loaded extension: " + metadata.getName());
         } catch (FileNotFoundException e) {
             Log.e(TAG, e.getMessage());
-            Toast("扩展打包格式错误！");
+            Toast("未找到扩展描述文件！");
             FileSystem.rmRF(folder);
             return;
         } catch (JsonParseException e) {
