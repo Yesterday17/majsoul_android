@@ -7,6 +7,7 @@ import androidx.annotation.Keep;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
+import cn.yesterday17.majsoul_android.Global;
 import cn.yesterday17.majsoul_android.utils.Network;
 
 import static cn.yesterday17.majsoul_android.Global.gson;
@@ -22,7 +23,7 @@ public class GameVersion {
             try {
                 if (gameVersion == null || gameVersion.equals("")
                         || codeAddress == null || codeAddress.equals("")) {
-                    String data = Network.getString("https://majsoul.union-game.com/app/web/html/version.json");
+                    String data = Network.getString(Global.gameUrl + "version.json");
                     GameVersionJson response = gson.fromJson(data, GameVersionJson.class);
                     gameVersion = response.version;
                     codeAddress = response.code;
