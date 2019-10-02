@@ -4,16 +4,12 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 
 import java.io.IOException;
+import java.io.InputStream;
 
-import cn.yesterday17.majsoul_android.Global;
 import cn.yesterday17.majsoul_android.MajsoulApplication;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 public class Network {
     private static OkHttpClient client = new OkHttpClient();
@@ -32,5 +28,11 @@ public class Network {
         Request request = new Request.Builder().url(url).build();
         Response response = client.newCall(request).execute();
         return response.body().string();
+    }
+
+    public static InputStream getInputStream(String url) throws IOException {
+        Request request = new Request.Builder().url(url).build();
+        Response response = client.newCall(request).execute();
+        return response.body().byteStream();
     }
 }

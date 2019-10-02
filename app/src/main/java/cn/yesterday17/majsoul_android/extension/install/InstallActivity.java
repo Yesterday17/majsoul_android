@@ -37,61 +37,80 @@ public class InstallActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        install();
+        install(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        install();
+        install(intent);
     }
 
-    private void Toast(String text) {
+    protected void Toast(String text) {
         runOnUiThread(() -> Toast.makeText(this, text, Toast.LENGTH_SHORT).show());
     }
 
     /**
      * 安装扩展的总流程
      */
-    void install() {
-        Intent intent = getIntent();
-
+    void install(Intent intent) {
         new Thread(() -> {
-            preInstall(intent);
+            if (preInstall(intent)) {
+                Log.d(TAG, intent.getDataString());
+                Toast("导入扩展中...");
 
-            Log.d(TAG, intent.getDataString());
-            Toast("导入扩展中...");
-
-            doInstall(intent);
-
+                InputStream stream = genInputStream(intent);
+                if (stream == null) {
+                    Toast("未找到扩展文件！");
+                } else {
+                    doInstall(stream);
+                }
+            }
             postInstall();
         }).start();
     }
 
     /**
-     * 处理安装前事务
+     * 处理安装前事务，验证 Url 合法性
      *
      * @param intent Activity 的 Intent
      */
-    void preInstall(Intent intent) {
-        if (intent.getDataString() == null) {
-            Log.e(TAG, "intent.getDataString() is null");
+    boolean preInstall(Intent intent) {
+        if (intent.getData() == null) {
+            Log.e(TAG, "intent.getData() is null");
             Toast("非法输入！");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 生成 Intent 对应的安装文件的 InputStream
+     *
+     * @param intent 需要解析的 Intent
+     * @return 生成的 InputStream
+     */
+    InputStream genInputStream(Intent intent) {
+        try {
+            return getContentResolver().openInputStream(intent.getData());
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "stream == null");
+            return null;
         }
     }
+
 
     /**
      * 正式的安装工作
      *
-     * @param intent Activity 的 Intent
+     * @param inputStream 安装文件的输入流
      */
-    void doInstall(Intent intent) {
+    void doInstall(InputStream inputStream) {
         String installDir = getFilesDir().toString();
         String id = "";
         boolean idUniqueCheck = false;
 
         try {
-            InputStream inputStream = getContentResolver().openInputStream(intent.getData());
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
 
             ZipEntry entry;
