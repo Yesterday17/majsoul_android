@@ -17,7 +17,7 @@ public class CodeJS {
         new Thread(() -> {
             try {
                 if (codeJS == null || codeJS.equals("")) {
-                    Log.d(TAG, Global.gameUrl + "v" + GameVersion.gameVersion + "/code.js");
+                    Log.d(TAG, Global.gameUrl + "v" + GameVersion.codeAddress);
                     codeJS = Network.getString(Global.gameUrl + "v" + GameVersion.gameVersion + "/code.js");
                     error = null;
                 }
