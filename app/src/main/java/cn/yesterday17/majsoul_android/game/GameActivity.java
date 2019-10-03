@@ -93,7 +93,7 @@ public class GameActivity extends Activity {
 
         GameEngine.setLayaEventListener(new GameListener());
         GameEngine.setInterceptKey(true);
-        GameEngine.game_showAssistantTouch(!Global.directGame || Global.showAssistant);
+        GameEngine.game_showAssistantTouch(Global.directGame || Global.showAssistant);
         GameEngine.onCreate();
 
         Log.d(TAG_ENGINE, "soPath = " + GameEngine.getSoPath());
