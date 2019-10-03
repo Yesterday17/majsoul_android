@@ -34,6 +34,8 @@ class SettingBridge {
             return Global.gameUrl;
         } else if (key.equals("directGame")) {
             return Global.directGame;
+        } else if (key.equals("showAssistant")) {
+            return Global.showAssistant;
         } else {
             return null;
         }
@@ -47,6 +49,10 @@ class SettingBridge {
         } else if (key.equals("directGame")) {
             Global.directGame = (Boolean) value;
             preferences.edit().putBoolean("direct_game", Global.directGame).apply();
+            return true;
+        } else if (key.equals("showAssistant")) {
+            Global.showAssistant = (Boolean) value;
+            preferences.edit().putBoolean("show_assistant", Global.showAssistant).apply();
             return true;
         } else {
             return false;

@@ -18,8 +18,8 @@ import cn.yesterday17.majsoul_android.R;
 @Keep
 public class SplashDialog extends Dialog {
     private static String[] tips = new String[4];
-    private static int tipIndex = 0;
-    private static int loadPercent = 0;
+    private static int tipIndex;
+    private static int loadPercent;
     private static String format = "%1$s (%2$d)%%";
 
     // Widgets
@@ -31,6 +31,8 @@ public class SplashDialog extends Dialog {
     SplashDialog(Context context) {
         super(context, R.style.Theme_Splash);
 
+        tipIndex = 0;
+        loadPercent = 0;
         splashHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message message) {

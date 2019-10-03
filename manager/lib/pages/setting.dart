@@ -12,6 +12,7 @@ class _SettingPageState extends State<SettingPage> {
       const MethodChannel('cn.yesterday17.majsoul_android/setting');
 
   bool directGame = false;
+  bool showAssistant = false;
   String gameUrl = '';
 
   Future<void> _getSettings() async {
@@ -19,7 +20,9 @@ class _SettingPageState extends State<SettingPage> {
       platform
           .invokeMethod('get', {'key': 'gameUrl'}).then((url) => gameUrl = url),
       platform.invokeMethod(
-          'get', {'key': 'directGame'}).then((direct) => directGame = direct)
+          'get', {'key': 'directGame'}).then((direct) => directGame = direct),
+      platform.invokeMethod(
+          'get', {'key': 'showAssistant'}).then((show) => showAssistant = show)
     ]);
     try {
       setState(() {});
@@ -51,6 +54,18 @@ class _SettingPageState extends State<SettingPage> {
                   directGame = value;
                   platform.invokeMethod(
                       'set', {'key': 'directGame', 'value': directGame});
+                });
+              },
+            ),
+            SwitchListTile(
+              title: Text('强制显示悬浮窗'),
+              subtitle: Text('就算是从管理器启动的游戏也显示悬浮窗。'),
+              value: showAssistant,
+              onChanged: (value) {
+                setState(() {
+                  showAssistant = value;
+                  platform.invokeMethod(
+                      'set', {'key': 'showAssistant', 'value': showAssistant});
                 });
               },
             ),

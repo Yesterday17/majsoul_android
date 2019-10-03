@@ -15,6 +15,8 @@ public class Global {
 
     public static boolean directGame;
 
+    public static boolean showAssistant;
+
     public static boolean isManagerRunning = false;
 
     public static boolean isGameRunning = false;

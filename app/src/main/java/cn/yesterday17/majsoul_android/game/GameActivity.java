@@ -3,19 +3,25 @@ package cn.yesterday17.majsoul_android.game;
 import cn.yesterday17.majsoul_android.Global;
 import cn.yesterday17.majsoul_android.R;
 import cn.yesterday17.majsoul_android.extension.ExtensionManager;
+import cn.yesterday17.majsoul_android.game.floatingview.BaseFloatingView;
+import cn.yesterday17.majsoul_android.game.floatingview.FloatingViewManager;
 import cn.yesterday17.majsoul_android.majsoul.ResourceReplace;
+import cn.yesterday17.majsoul_android.manager.ManagerActivity;
 import layaair.game.conch.ILayaEventListener;
 import layaair.game.conch.LayaConch5;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
+
 public class GameActivity extends Activity {
     private static String TAG = "GameActivity";
     private static String TAG_ENGINE = "LayaConchEngine";
+    private BaseFloatingView floatingButton;
 
     // 面向接口，嗯，面向接口（逃
     private LayaConch5 GameEngine;
@@ -29,6 +35,20 @@ public class GameActivity extends Activity {
 
         Global.isGameRunning = true;
 
+        floatingButton = new BaseFloatingView(this, R.layout.icon_floating_view) {
+            @Override
+            protected void onClick() {
+                FloatingViewManager.Instance().remove();
+            }
+
+            @Override
+            protected void onLongPress() {
+                Intent intent = new Intent(GameActivity.this, ManagerActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        };
+
         // 设置全屏
         this.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -40,6 +60,19 @@ public class GameActivity extends Activity {
         // 加载界面
         new SplashDialog(this).showSplash();
         initEngine();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FloatingViewManager.Instance().attach(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Global.isGameRunning = false;
+        FloatingViewManager.Instance().detach(this);
     }
 
     public void initEngine() {
@@ -60,6 +93,7 @@ public class GameActivity extends Activity {
 
         GameEngine.setLayaEventListener(new GameListener());
         GameEngine.setInterceptKey(true);
+        GameEngine.game_showAssistantTouch(!Global.directGame || Global.showAssistant);
         GameEngine.onCreate();
 
         Log.d(TAG_ENGINE, "soPath = " + GameEngine.getSoPath());
@@ -117,7 +151,12 @@ public class GameActivity extends Activity {
         }
 
         @Override
-        public void showAssistantTouch(boolean b) {
+        public void showAssistantTouch(boolean show) {
+            if (show) {
+                FloatingViewManager.Instance().add(floatingButton);
+            } else {
+                FloatingViewManager.Instance().remove();
+            }
         }
 
         @Override

@@ -66,6 +66,7 @@ public class ManagerActivity extends FlutterActivity {
         preferences = getPreferences(SETTINGS_PREF);
         Global.gameUrl = preferences.getString("game_url", "https://majsoul.union-game.com/app/web/html/");
         Global.directGame = preferences.getBoolean("direct_game", false);
+        Global.showAssistant = preferences.getBoolean("show_assistant", false);
     }
 
     void initMethodChannels() {
