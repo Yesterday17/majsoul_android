@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
-import androidx.core.view.ViewCompat;
-
 /**
  * 修改自 https://github.com/leotyndale/EnFloatingView
  */
@@ -35,7 +33,7 @@ public class FloatingViewManager {
             if (floatingView == null) {
                 return;
             }
-            if (ViewCompat.isAttachedToWindow(floatingView) && mContainer != null) {
+            if (floatingView.isAttachedToWindow() && mContainer != null) {
                 mContainer.removeView(floatingView);
             }
             floatingView = null;
@@ -86,7 +84,7 @@ public class FloatingViewManager {
     }
 
     private FloatingViewManager detach(FrameLayout container) {
-        if (floatingView != null && container != null && ViewCompat.isAttachedToWindow(floatingView)) {
+        if (floatingView != null && container != null && floatingView.isAttachedToWindow()) {
             container.removeView(floatingView);
         }
         if (mContainer == container) {
