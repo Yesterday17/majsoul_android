@@ -12,6 +12,7 @@ import layaair.game.conch.LayaConch5;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
@@ -66,6 +67,11 @@ public class GameActivity extends Activity {
     protected void onStart() {
         super.onStart();
         FloatingViewManager.Instance().attach(this);
+
+        // 对分屏进行特别优化
+        if (isEngineInitialized) {
+            GameEngine.onResume();
+        }
     }
 
     @Override
@@ -73,6 +79,10 @@ public class GameActivity extends Activity {
         super.onStop();
         Global.isGameRunning = false;
         FloatingViewManager.Instance().detach(this);
+
+        if (isEngineInitialized && !this.isInMultiWindowMode()) {
+            GameEngine.onPause();
+        }
     }
 
     public void initEngine() {
@@ -112,22 +122,6 @@ public class GameActivity extends Activity {
             cache.append(vString[i]).append("/");
         }
         return cache.toString();
-    }
-
-    // 处理暂停逻辑，对分屏进行特别优化
-    protected void onPause() {
-        super.onPause();
-        if (isEngineInitialized && !this.isInMultiWindowMode()) {
-            GameEngine.onPause();
-        }
-    }
-
-    // 从暂停恢复
-    protected void onResume() {
-        super.onResume();
-        if (isEngineInitialized) {
-            GameEngine.onResume();
-        }
     }
 
     // 游戏结束
